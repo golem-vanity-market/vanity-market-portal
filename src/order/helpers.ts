@@ -1,6 +1,7 @@
 import { createWalletClient, http } from "@arkiv-network/sdk";
 import { kaolin } from "@arkiv-network/sdk/chains";
-import { custom, type EIP1193Provider } from "viem";
+import { custom } from "viem";
+
 export const getEthereumGlobal = () => {
   if (typeof window !== "undefined" && (window as any).ethereum) {
     return (window as any).ethereum;
