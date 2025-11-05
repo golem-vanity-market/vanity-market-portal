@@ -33,6 +33,7 @@ const fetchMyRequests = async () => {
   const rawRes = await arkivClient.query(
     `vanity_market_request="3" && $owner="${arkivClient.account.address}"`,
   );
+  console.log(`Raw query: vanity_market_request="3" && $owner="${arkivClient.account.address}"`);
   return rawRes
     .map((entity) => {
       let jsonParsed = null;
