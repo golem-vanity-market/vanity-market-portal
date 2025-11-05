@@ -11,13 +11,13 @@ const fetchOrder = async (orderId: string) => {
     throw new Error("Invalid order ID format");
   }
   const arkivClient = await makeClient();
-  const rawRes = await arkivClient.getStorageValue(orderId);
+  const rawRes = await arkivClient.getEntity(orderId);
   if (!rawRes) {
     throw new Error("Order not found");
   }
   let jsonParsed = null;
   try {
-    jsonParsed = JSON.parse(rawRes.toString());
+    jsonParsed = JSON.parse(rawRes.payload.toString());
   } catch {
     throw new Error("Failed to parse JSON for order");
   }

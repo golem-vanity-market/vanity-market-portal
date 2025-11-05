@@ -1,4 +1,5 @@
-import { Tagged, createClient } from "arkiv-sdk";
+import { createWalletClient, http } from "@arkiv-network/sdk";
+import { kaolin } from "@arkiv-network/sdk/chains";
 
 export const getEthereumGlobal = () => {
   if (typeof window !== "undefined" && (window as any).ethereum) {
@@ -43,11 +44,10 @@ export const msToShort = (ms: number) => {
   return `${m}m`;
 };
 
-export const makeClient = async () => {
-  return createClient(
-    parseInt(import.meta.env.VITE_ARKIV_CHAIN_ID),
-    new Tagged("ethereumprovider", getEthereumGlobal()),
-    import.meta.env.VITE_ARKIV_RPC,
-    import.meta.env.VITE_ARKIV_RPC_WS,
-  );
+export const makeClient = () => {
+  return createWalletClient({
+    account: getEthereumGlobal(),
+    chain: kaolin,
+    transport: http(),
+  });
 };

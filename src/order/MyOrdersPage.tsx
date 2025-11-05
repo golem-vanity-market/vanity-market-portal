@@ -29,15 +29,15 @@ type TabKey = (typeof VALID_TABS)[number];
 const VALID_TAB_SET = new Set<TabKey>(VALID_TABS);
 
 const fetchMyRequests = async () => {
-  const arkivClient = await makeClient();
-  const rawRes = await arkivClient.queryEntities(
-    `vanity_market_request="3" && $owner="${arkivClient.getRawClient().walletClient.account.address}"`,
+  const arkivClient = makeClient();
+  const rawRes = await arkivClient.query(
+    `vanity_market_request="3" && $owner="${arkivClient.account.address}"`,
   );
   return rawRes
-    .map(({ entityKey, storageValue }) => {
+    .map((entity) => {
       let jsonParsed = null;
       try {
-        jsonParsed = JSON.parse(storageValue.toString());
+        jsonParsed = JSON.parse(entity.payload.toString());
       } catch (e) {
         console.error("Failed to parse JSON for order:", e);
         return null;
@@ -47,7 +47,7 @@ const fetchMyRequests = async () => {
         console.error("Failed to validate request:", parsed.error);
         return null;
       }
-      return { id: entityKey as string, order: parsed.data };
+      return { id: entity.key as string, order: parsed.data };
     })
     .filter(
       (o): o is { id: string; order: VanityRequestWithTimestamp } => o !== null,
@@ -64,17 +64,17 @@ const fetchOrders = async (allOrders: boolean) => {
 
   let rawRes;
   if (!allOrders) {
-    rawRes = await arkivClient.queryEntities(
-      `vanity_market_order="3" && requestor="${arkivClient.getRawClient().walletClient.account.address}"`,
+    rawRes = await arkivClient.query(
+      `vanity_market_order="3" && requestor="${arkivClient.account.address}"`,
     );
   } else {
-    rawRes = await arkivClient.queryEntities(`vanity_market_order="3"`);
+    rawRes = await arkivClient.query(`vanity_market_order="3"`);
   }
   return rawRes
-    .map(({ entityKey, storageValue }) => {
+    .map((entity) => {
       let jsonParsed = null;
       try {
-        jsonParsed = JSON.parse(storageValue.toString());
+        jsonParsed = JSON.parse(entity.payload.toString());
       } catch (e) {
         console.error("Failed to parse JSON for order:", e);
         return null;
@@ -84,10 +84,12 @@ const fetchOrders = async (allOrders: boolean) => {
         console.error("Failed to validate order:", parsed.error);
         return null;
       }
-      return { ...parsed.data, orderId: entityKey as string };
+      return { ...parsed.data, orderId: entity.key };
     })
     .filter(
-      (o): o is z.infer<typeof VanityOrderSchema> & { orderId: string } =>
+      (
+        o,
+      ): o is z.infer<typeof VanityOrderSchema> & { orderId: `0x${string}` } =>
         o !== null,
     )
     .sort(

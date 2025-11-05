@@ -50,14 +50,14 @@ import { CancelRequestButton } from "./CancelRequestButton";
 
 const fetchOrderResults = async (orderId: string) => {
   const arkivClient = await makeClient();
-  const rawRes = await arkivClient.queryEntities(
+  const rawRes = await arkivClient.query(
     `vanity_market_order_result="2" && orderId="${orderId}"`,
   );
   return rawRes
-    .map(({ entityKey, storageValue }) => {
+    .map((entity) => {
       let jsonParsed = null;
       try {
-        jsonParsed = JSON.parse(storageValue.toString());
+        jsonParsed = JSON.parse(entity.payload.toString());
       } catch (e) {
         console.error("Failed to parse JSON for order:", e);
         return null;
@@ -67,7 +67,7 @@ const fetchOrderResults = async (orderId: string) => {
         console.error("Failed to validate result:", parsed.error);
         return null;
       }
-      return { id: entityKey as string, order: parsed.data };
+      return { id: entity.key as string, order: parsed.data };
     })
     .filter((o): o is { id: string; order: VanityOrderResult } => o !== null);
 };

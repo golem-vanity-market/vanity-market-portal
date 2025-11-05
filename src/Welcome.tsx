@@ -176,7 +176,7 @@ const Welcome = () => {
           </Button>
           <Button size="lg" variant="outline" asChild>
             <Link
-              to="https://github.com/golem-vanity-market/golem-vanity-market-cli"
+              to="https://github.com/orgs/golem-vanity-market/repositories"
               target="_blank"
               rel="noreferrer"
             >

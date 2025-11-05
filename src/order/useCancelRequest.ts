@@ -1,13 +1,14 @@
-import { ArkivUpdate, ExpirationTime, Hex } from "arkiv-sdk";
+import { Hex } from "@arkiv-network/sdk";
 import { makeClient } from "./helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/components/Toast";
+import { ExpirationTime } from "@arkiv-network/sdk/utils";
 
 async function cancelRequest(requestId: Hex): Promise<void> {
   const client = await makeClient();
-  const requestBody = await client.getStorageValue(requestId);
-  const metadata = await client.getEntityMetaData(requestId);
-  if (!requestBody || !metadata) {
+  const entity = await client.getEntity(requestId);
+  const requestBody = entity.payload;
+  if (!requestBody || !entity.attributes) {
     throw new Error("Request not found");
   }
   const bodyAsString = new TextDecoder().decode(requestBody);
@@ -15,14 +16,14 @@ async function cancelRequest(requestId: Hex): Promise<void> {
   bodyObj.cancelledAt = new Date().toISOString();
   const updatedBodyString = JSON.stringify(bodyObj);
   const requestBodyUpdated = new TextEncoder().encode(updatedBodyString);
-  const updateBody: ArkivUpdate = {
+  const updateBody = {
     entityKey: requestId,
-    data: requestBodyUpdated,
+    payload: requestBodyUpdated,
     expiresIn: ExpirationTime.fromDays(7),
-    numericAnnotations: metadata.numericAnnotations,
-    stringAnnotations: metadata.stringAnnotations,
+    attributes: entity.attributes,
+    contentType: entity.contentType,
   };
-  await client.updateEntities([updateBody]);
+  await client.updateEntity(updateBody);
 }
 export function useCancelRequest() {
   const queryClient = useQueryClient();
