@@ -1,4 +1,3 @@
-import { Annotation, createClient, Tagged } from "golem-base-sdk";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -41,6 +40,7 @@ import { problems, problemsById } from "./problem-config";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/Toast";
 import { KeyGuideSheet } from "./KeyGuideSheet";
+import { makeClient } from "@/order/helpers.ts";
 
 const FormSchema = z
   .object({
@@ -225,12 +225,7 @@ const getEthereumGlobal = () => {
 };
 
 async function sendOrder(data: z.infer<typeof FormSchema>) {
-  const arkivClient = await createClient(
-    parseInt(import.meta.env.VITE_ARKIV_CHAIN_ID),
-    new Tagged("ethereumprovider", getEthereumGlobal()),
-    import.meta.env.VITE_ARKIV_RPC,
-    import.meta.env.VITE_ARKIV_RPC_WS,
-  );
+  const arkivClient = makeClient();
 
   const timestamp = new Date().toISOString();
   const utf8Encode = new TextEncoder();
@@ -248,23 +243,20 @@ async function sendOrder(data: z.infer<typeof FormSchema>) {
     cancelledAt: null,
   });
 
-  const res = await arkivClient.createEntities([
-    {
-      data: utf8Encode.encode(
-        JSON.stringify({
-          ...parsedEntity,
-          timestamp,
-        }),
-      ),
-      btl: 30 * 1800 * 24, // 30d, block every 2 seconds
-      stringAnnotations: [
-        new Annotation("vanity_market_request", "3"),
-        new Annotation("timestamp", timestamp),
-      ],
-      numericAnnotations: [],
-    },
-  ]);
-  return res;
+  return await arkivClient.createEntity({
+    payload: utf8Encode.encode(
+      JSON.stringify({
+        ...parsedEntity,
+        timestamp,
+      }),
+    ),
+    expiresIn: 30 * 1800 * 24, // 30d, block every 2 seconds
+    attributes: [
+      { key: "vanity_market_request", value: "3" },
+      { key: "timestamp", value: timestamp },
+    ],
+    contentType: "application/json",
+  });
 }
 
 export const NewOrderPage = () => {
@@ -322,7 +314,7 @@ export const NewOrderPage = () => {
           label: "View in block explorer",
           onClick: () => {
             window.open(
-              `${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${data[0].entityKey}?tab=data`,
+              `${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${data.entityKey}?tab=data`,
               "_blank",
             );
           },
