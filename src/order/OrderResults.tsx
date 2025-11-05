@@ -57,7 +57,7 @@ const fetchOrderResults = async (orderId: string) => {
     .map((entity) => {
       let jsonParsed = null;
       try {
-        jsonParsed = JSON.parse(entity.payload.toString());
+        jsonParsed = JSON.parse(entityad.toString());
       } catch (e) {
         console.error("Failed to parse JSON for order:", e);
         return null;

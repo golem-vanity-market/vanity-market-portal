@@ -17,7 +17,8 @@ const fetchOrder = async (orderId: string) => {
   }
   let jsonParsed = null;
   try {
-    jsonParsed = JSON.parse(rawRes.payload.toString());
+    const text = new TextDecoder().decode(rawRes.payload);
+    jsonParsed = JSON.parse(text);
   } catch {
     throw new Error("Failed to parse JSON for order");
   }

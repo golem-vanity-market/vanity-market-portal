@@ -37,7 +37,8 @@ const fetchMyRequests = async () => {
     .map((entity) => {
       let jsonParsed = null;
       try {
-        jsonParsed = JSON.parse(entity.payload.toString());
+        const text = new TextDecoder().decode(entity.payload);
+        jsonParsed = JSON.parse(text);
       } catch (e) {
         console.error("Failed to parse JSON for order:", e);
         return null;
@@ -74,7 +75,8 @@ const fetchOrders = async (allOrders: boolean) => {
     .map((entity) => {
       let jsonParsed = null;
       try {
-        jsonParsed = JSON.parse(entity.payload.toString());
+        const text = new TextDecoder().decode(entity.payload);
+        jsonParsed = JSON.parse(text);
       } catch (e) {
         console.error("Failed to parse JSON for order:", e);
         return null;
