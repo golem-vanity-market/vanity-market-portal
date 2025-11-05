@@ -31,9 +31,9 @@ const VALID_TAB_SET = new Set<TabKey>(VALID_TABS);
 const fetchMyRequests = async () => {
   const arkivClient = makeClient();
   const rawRes = await arkivClient.query(
-    `vanity_market_request="3" && $owner="${arkivClient.account.address}"`,
+    `vanity_market_request="3" && $owner="${arkivClient.account.selectedAddress}"`,
   );
-  console.log(`Raw query: vanity_market_request="3" && $owner="${arkivClient.account.address}"`);
+  console.log(`Raw query: vanity_market_request="3" && $owner="${arkivClient.account.selectedAddress}"`);
   return rawRes
     .map((entity) => {
       let jsonParsed = null;
@@ -67,7 +67,7 @@ const fetchOrders = async (allOrders: boolean) => {
   let rawRes;
   if (!allOrders) {
     rawRes = await arkivClient.query(
-      `vanity_market_order="3" && requestor="${arkivClient.account.address}"`,
+      `vanity_market_order="3" && requestor="${arkivClient.account.selectedAddress}"`,
     );
   } else {
     rawRes = await arkivClient.query(`vanity_market_order="3"`);
