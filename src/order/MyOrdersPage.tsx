@@ -69,10 +69,10 @@ const fetchOrders = async (allOrders: boolean) => {
   let rawRes;
   if (!allOrders) {
     rawRes = await arkivClient.query(
-      `vanity_market_order="3" && requestor="${arkivClient.account.selectedAddress}"`,
+      `vanity_market_order="4" && requestor="${arkivClient.account.selectedAddress}"`,
     );
   } else {
-    rawRes = await arkivClient.query(`vanity_market_order="3"`);
+    rawRes = await arkivClient.query(`vanity_market_order="4"`);
   }
   return rawRes
     .map((entity) => {

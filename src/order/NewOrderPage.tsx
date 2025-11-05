@@ -252,7 +252,7 @@ async function sendOrder(data: z.infer<typeof FormSchema>) {
     ),
     expiresIn: 30 * 1800 * 24, // 30d, block every 2 seconds
     attributes: [
-      { key: "vanity_market_request", value: "3" },
+      { key: "vanity_market_request", value: "4" },
       { key: "timestamp", value: timestamp },
     ],
     contentType: "application/json",
