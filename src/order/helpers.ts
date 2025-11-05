@@ -1,6 +1,6 @@
 import { createWalletClient, http } from "@arkiv-network/sdk";
 import { kaolin } from "@arkiv-network/sdk/chains";
-
+import { custom, type EIP1193Provider } from "viem";
 export const getEthereumGlobal = () => {
   if (typeof window !== "undefined" && (window as any).ethereum) {
     return (window as any).ethereum;
@@ -46,8 +46,8 @@ export const msToShort = (ms: number) => {
 
 export const makeClient = () => {
   return createWalletClient({
-    account: getEthereumGlobal(),
+    account: getEthereumGlobal().selectedAddress,
     chain: kaolin,
-    transport: http(),
+    transport: custom(getEthereumGlobal()),
   });
 };
