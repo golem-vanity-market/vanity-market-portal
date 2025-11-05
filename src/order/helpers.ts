@@ -44,10 +44,17 @@ export const msToShort = (ms: number) => {
   return `${m}m`;
 };
 
-export const makeClient = () => {
+export const makeMetamaskClient = () => {
   return createWalletClient({
     account: getEthereumGlobal().selectedAddress,
     chain: kaolin,
     transport: custom(getEthereumGlobal()),
+  });
+};
+export const makeClient = () => {
+  return createWalletClient({
+    account: getEthereumGlobal().selectedAddress,
+    chain: kaolin,
+    transport: http(),
   });
 };

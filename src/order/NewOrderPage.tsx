@@ -40,7 +40,7 @@ import { problems, problemsById } from "./problem-config";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/Toast";
 import { KeyGuideSheet } from "./KeyGuideSheet";
-import { makeClient } from "@/order/helpers.ts";
+import { makeClient, makeMetamaskClient } from "@/order/helpers.ts";
 
 const FormSchema = z
   .object({
@@ -225,7 +225,7 @@ const getEthereumGlobal = () => {
 };
 
 async function sendOrder(data: z.infer<typeof FormSchema>) {
-  const arkivClient = makeClient();
+  const arkivClient = makeMetamaskClient();
 
   const timestamp = new Date().toISOString();
   const utf8Encode = new TextEncoder();
