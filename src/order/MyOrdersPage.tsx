@@ -34,12 +34,17 @@ const VALID_TABS = ["awaiting", "queued", "processing", "completed"] as const;
 type TabKey = (typeof VALID_TABS)[number];
 const VALID_TAB_SET = new Set<TabKey>(VALID_TABS);
 
-const fetchMyRequests = async () => {
+const fetchMyRequests = async (showAllOrders: boolean) => {
   const arkivWalletClient = makeMetamaskClient();
   const arkivClient = makeClient();
-  const rawRes = await arkivClient.query(
-    `vanity_market_request="4" && $owner="${getAddress(arkivWalletClient.account.selectedAddress)}"`,
-  );
+  let rawRes;
+  if (showAllOrders) {
+    rawRes = await arkivClient.query(`vanity_market_request="4"`);
+  } else {
+    rawRes = await arkivClient.query(
+      `vanity_market_request="4" && $owner="${getAddress(arkivWalletClient.account.selectedAddress)}"`,
+    );
+  }
   return rawRes
     .map((entity) => {
       let jsonParsed = null;
@@ -121,8 +126,8 @@ export const MyOrdersPage = () => {
     refetch: refetchRequests,
     isFetching: isRequestsFetching,
   } = useQuery<{ id: string; order: VanityRequestWithTimestamp }[]>({
-    queryKey: ["myRequests"],
-    queryFn: fetchMyRequests,
+    queryKey: ["myRequests", showAllOrders],
+    queryFn: () => fetchMyRequests(showAllOrders),
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
   });
