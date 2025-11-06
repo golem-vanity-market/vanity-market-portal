@@ -1,6 +1,5 @@
 import React, { useMemo, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { createROClient } from "golem-base-sdk";
 import { ModeToggle } from "./components/theme-toggle";
 import {
   NavigationMenu,
@@ -15,25 +14,25 @@ import { Skeleton } from "./components/ui/skeleton";
 import { Footer } from "./Footer.tsx";
 import { assetsUrl } from "./utils";
 import { ConnectButton } from "@/components/ConnectButton";
+import { createPublicClient } from "viem";
+import { kaolin } from "@arkiv-network/sdk/chains";
+import { http } from "@arkiv-network/sdk";
 
 const Dashboard = () => {
   const [current_block, setCurrentBlock] = React.useState<bigint | null>(null);
   const client = useMemo(
     () =>
-      createROClient(
-        parseInt(import.meta.env.VITE_ARKIV_CHAIN_ID || ""),
-        import.meta.env.VITE_ARKIV_RPC || "",
-        import.meta.env.VITE_ARKIV_RPC_WS || "",
-      ),
+      createPublicClient({
+        chain: kaolin,
+        transport: http(),
+      }),
     [],
   );
 
   useEffect(() => {
     const update_current_block = async () => {
       try {
-        const blockNumber = await client
-          .getRawClient()
-          .httpClient.getBlockNumber();
+        const blockNumber = await client.getBlockNumber();
         setCurrentBlock(blockNumber);
       } catch (error) {
         console.error("Failed to fetch block number:", error);

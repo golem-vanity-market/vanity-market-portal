@@ -28,7 +28,7 @@ import {
   type VanityRequestWithTimestamp,
 } from "db-vanity-model/src/order-schema.ts";
 import { z } from "zod";
-import {getAddress} from "viem";
+import { getAddress } from "viem";
 
 const VALID_TABS = ["awaiting", "queued", "processing", "completed"] as const;
 type TabKey = (typeof VALID_TABS)[number];

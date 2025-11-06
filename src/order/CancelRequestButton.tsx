@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from "react";
 import { Loader2, Trash2, XCircle } from "lucide-react";
-import type { Hex } from "golem-base-sdk";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { useCancelRequest } from "./useCancelRequest";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -12,6 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Hex } from "@arkiv-network/sdk";
 
 type CancelRequestBaseProps = {
   requestId: string | null | undefined;

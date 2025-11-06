@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { createROClient } from "golem-base-sdk";
 import { ProviderData } from "db-vanity-model/src/provider";
 import {
   fetchAllEntities,
@@ -29,6 +28,7 @@ import { useFilterState } from "./useFilterState";
 import { FilterCriteria, sortOptions } from "./provider-types";
 import { FilterHistory } from "./FilterHistory";
 import ProviderAnalytics from "@/providers/ProviderAnalytics.tsx";
+import { makeClient } from "@/order/helpers.ts";
 
 const buildQuery = (appliedFilters: FilterCriteria) => {
   let qbuild = `$owner = "${import.meta.env.VITE_ARKIV_OWNER_ADDRESS}"`;
@@ -143,15 +143,6 @@ const AnalyticsPage = () => {
     updateFavoriteName,
   } = useFilterState();
 
-  const client = useMemo(
-    () =>
-      createROClient(
-        parseInt(import.meta.env.VITE_ARKIV_CHAIN_ID || ""),
-        import.meta.env.VITE_ARKIV_RPC || "",
-        import.meta.env.VITE_ARKIV_RPC_WS || "",
-      ),
-    [],
-  );
   const fetchMoreData = () => {
     setDisplayLimit((prev) => prev + 50);
   };
@@ -179,7 +170,7 @@ const AnalyticsPage = () => {
     setLoading(true);
     try {
       const entities = await fetchAllEntities(
-        client,
+        makeClient(),
         10,
         import.meta.env.VITE_ARKIV_OWNER_ADDRESS,
         qbuild,
