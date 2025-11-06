@@ -28,6 +28,7 @@ import {
   type VanityRequestWithTimestamp,
 } from "db-vanity-model/src/order-schema.ts";
 import { z } from "zod";
+import {getAddress} from "viem";
 
 const VALID_TABS = ["awaiting", "queued", "processing", "completed"] as const;
 type TabKey = (typeof VALID_TABS)[number];
@@ -37,10 +38,7 @@ const fetchMyRequests = async () => {
   const arkivWalletClient = makeMetamaskClient();
   const arkivClient = makeClient();
   const rawRes = await arkivClient.query(
-    `vanity_market_request="4" && $owner="${arkivWalletClient.account.selectedAddress}"`,
-  );
-  console.log(
-    `Raw query: vanity_market_request="4" && $owner="${arkivWalletClient.account.selectedAddress}"`,
+    `vanity_market_request="4" && $owner="${getAddress(arkivWalletClient.account.selectedAddress)}"`,
   );
   return rawRes
     .map((entity) => {
@@ -76,7 +74,7 @@ const fetchOrders = async (allOrders: boolean) => {
   let rawRes;
   if (!allOrders) {
     rawRes = await arkivClient.query(
-      `vanity_market_order="4" && requestor="${arkivWalletClient.account.selectedAddress}"`,
+      `vanity_market_order="4" && requestor="${getAddress(arkivWalletClient.account.selectedAddress)}"`,
     );
   } else {
     rawRes = await arkivClient.query(`vanity_market_order="4"`);
