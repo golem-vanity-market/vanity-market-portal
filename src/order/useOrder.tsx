@@ -10,7 +10,7 @@ const fetchOrder = async (orderId: string) => {
   if (!isValidHex(orderId)) {
     throw new Error("Invalid order ID format");
   }
-  const arkivClient = await makeClient();
+  const arkivClient = makeClient();
   const rawRes = await arkivClient.getEntity(orderId);
   if (!rawRes) {
     throw new Error("Order not found");

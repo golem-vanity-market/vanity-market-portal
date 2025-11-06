@@ -13,7 +13,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Loader2, PlusCircle, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
-import { REQUEST_TTL_MS, makeClient, msToShort } from "./helpers";
+import {
+  REQUEST_TTL_MS,
+  makeClient,
+  msToShort,
+  makeMetamaskClient,
+} from "./helpers";
 import OrdersExplainer from "./OrdersExplainer";
 import OpenOrdersSection from "./OpenOrdersSection";
 import MyOrdersSection from "./MyOrdersSection";
@@ -29,12 +34,13 @@ type TabKey = (typeof VALID_TABS)[number];
 const VALID_TAB_SET = new Set<TabKey>(VALID_TABS);
 
 const fetchMyRequests = async () => {
+  const arkivWalletClient = makeMetamaskClient();
   const arkivClient = makeClient();
   const rawRes = await arkivClient.query(
-    `vanity_market_request="4" && $owner="${arkivClient.account.selectedAddress}"`,
+    `vanity_market_request="4" && $owner="${arkivWalletClient.account.selectedAddress}"`,
   );
   console.log(
-    `Raw query: vanity_market_request="4" && $owner="${arkivClient.account.selectedAddress}"`,
+    `Raw query: vanity_market_request="4" && $owner="${arkivWalletClient.account.selectedAddress}"`,
   );
   return rawRes
     .map((entity) => {
@@ -64,12 +70,13 @@ const fetchMyRequests = async () => {
 };
 
 const fetchOrders = async (allOrders: boolean) => {
-  const arkivClient = await makeClient();
+  const arkivWalletClient = makeMetamaskClient();
+  const arkivClient = makeClient();
 
   let rawRes;
   if (!allOrders) {
     rawRes = await arkivClient.query(
-      `vanity_market_order="4" && requestor="${arkivClient.account.selectedAddress}"`,
+      `vanity_market_order="4" && requestor="${arkivWalletClient.account.selectedAddress}"`,
     );
   } else {
     rawRes = await arkivClient.query(`vanity_market_order="4"`);

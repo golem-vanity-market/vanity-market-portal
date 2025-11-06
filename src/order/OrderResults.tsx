@@ -49,7 +49,7 @@ import { displayDifficulty } from "@/utils";
 import { CancelRequestButton } from "./CancelRequestButton";
 
 const fetchOrderResults = async (orderId: string) => {
-  const arkivClient = await makeClient();
+  const arkivClient = makeClient();
   const rawRes = await arkivClient.query(
     `vanity_market_order_result="2" && orderId="${orderId}"`,
   );

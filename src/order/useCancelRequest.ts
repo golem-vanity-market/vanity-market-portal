@@ -1,11 +1,11 @@
 import { Hex } from "@arkiv-network/sdk";
-import { makeClient } from "./helpers";
+import { makeClient, makeMetamaskClient } from "./helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/components/Toast";
 import { ExpirationTime } from "@arkiv-network/sdk/utils";
 
 async function cancelRequest(requestId: Hex): Promise<void> {
-  const client = await makeClient();
+  const client = makeClient();
   const entity = await client.getEntity(requestId);
   const requestBody = entity.payload;
   if (!requestBody || !entity.attributes) {
@@ -23,7 +23,7 @@ async function cancelRequest(requestId: Hex): Promise<void> {
     attributes: entity.attributes,
     contentType: entity.contentType,
   };
-  await client.updateEntity(updateBody);
+  await makeMetamaskClient().updateEntity(updateBody);
 }
 export function useCancelRequest() {
   const queryClient = useQueryClient();
