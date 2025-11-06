@@ -39,10 +39,10 @@ const fetchMyRequests = async (showAllOrders: boolean) => {
   const arkivClient = makeClient();
   let rawRes;
   if (showAllOrders) {
-    rawRes = await arkivClient.query(`vanity_market_request="4"`);
+    rawRes = await arkivClient.query(`vanity_market_request="5"`);
   } else {
     rawRes = await arkivClient.query(
-      `vanity_market_request="4" && $owner="${getAddress(arkivWalletClient.account.selectedAddress)}"`,
+      `vanity_market_request="5" && $owner="${getAddress(arkivWalletClient.account.selectedAddress)}"`,
     );
   }
   return rawRes
@@ -79,10 +79,10 @@ const fetchOrders = async (allOrders: boolean) => {
   let rawRes;
   if (!allOrders) {
     rawRes = await arkivClient.query(
-      `vanity_market_order="4" && requestor="${getAddress(arkivWalletClient.account.selectedAddress)}"`,
+      `vanity_market_order="5" && requestor="${getAddress(arkivWalletClient.account.selectedAddress)}"`,
     );
   } else {
-    rawRes = await arkivClient.query(`vanity_market_order="4"`);
+    rawRes = await arkivClient.query(`vanity_market_order="5"`);
   }
   return rawRes
     .map((entity) => {
