@@ -2,6 +2,7 @@ import {
   createPublicClient,
   createWalletClient,
   http,
+  PublicArkivClient,
 } from "@arkiv-network/sdk";
 import { kaolin } from "@arkiv-network/sdk/chains";
 import { custom } from "viem";
@@ -56,9 +57,12 @@ export const makeMetamaskClient = () => {
     transport: custom(getEthereumGlobal()),
   });
 };
-export const makeClient = () => {
-  return createPublicClient({
-    chain: kaolin,
-    transport: http(),
-  });
-};
+
+const clientGlobal = createPublicClient({
+  chain: kaolin,
+  transport: http(),
+});
+
+export function publicArkivClient(): PublicArkivClient {
+  return clientGlobal;
+}

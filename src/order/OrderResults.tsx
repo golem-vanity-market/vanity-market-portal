@@ -16,7 +16,7 @@ import {
   VanityOrderResultSchema,
   type Problem,
 } from "db-vanity-model/src/order-schema.ts";
-import { makeClient, msToShort, truncateMiddle } from "./helpers";
+import { msToShort, publicArkivClient, truncateMiddle } from "./helpers";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,7 +49,7 @@ import { displayDifficulty } from "@/utils";
 import { CancelRequestButton } from "./CancelRequestButton";
 
 const fetchOrderResults = async (orderId: string) => {
-  const arkivClient = makeClient();
+  const arkivClient = publicArkivClient();
   const rawRes = await arkivClient.query(
     `vanity_market_order_result="2" && orderId="${orderId}"`,
   );

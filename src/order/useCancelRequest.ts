@@ -1,11 +1,11 @@
 import { Hex } from "@arkiv-network/sdk";
-import { makeClient, makeMetamaskClient } from "./helpers";
+import { publicArkivClient, makeMetamaskClient } from "./helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/components/Toast";
 import { ExpirationTime } from "@arkiv-network/sdk/utils";
 
 async function cancelRequest(requestId: Hex): Promise<void> {
-  const client = makeClient();
+  const client = publicArkivClient();
   const entity = await client.getEntity(requestId);
   const requestBody = entity.payload;
   if (!requestBody || !entity.attributes) {

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { makeClient } from "./helpers";
+import { publicArkivClient } from "./helpers";
 import { VanityOrderSchema } from "db-vanity-model/src/order-schema.ts";
 
 const isValidHex = (str: string): str is `0x${string}` => {
@@ -10,7 +10,7 @@ const fetchOrder = async (orderId: string) => {
   if (!isValidHex(orderId)) {
     throw new Error("Invalid order ID format");
   }
-  const arkivClient = makeClient();
+  const arkivClient = publicArkivClient();
   const rawRes = await arkivClient.getEntity(orderId);
   if (!rawRes) {
     throw new Error("Order not found");

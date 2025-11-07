@@ -27,7 +27,7 @@ import ExperimentalAlert from "@/components/ExperimentalAlert";
 import { useFilterState } from "./useFilterState";
 import { FilterCriteria, sortOptions } from "./provider-types";
 import { FilterHistory } from "./FilterHistory";
-import { makeClient } from "@/order/helpers.ts";
+import { publicArkivClient } from "@/order/helpers.ts";
 
 const buildQuery = (appliedFilters: FilterCriteria) => {
   let qbuild = `$owner = "${import.meta.env.VITE_ARKIV_OWNER_ADDRESS}"`;
@@ -169,7 +169,7 @@ const ProvidersPage = () => {
     setLoading(true);
     try {
       const entities = await fetchAllEntities(
-        makeClient(),
+        publicArkivClient(),
         10,
         import.meta.env.VITE_ARKIV_OWNER_ADDRESS,
         qbuild,

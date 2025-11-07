@@ -15,9 +15,9 @@ import { Loader2, PlusCircle, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   REQUEST_TTL_MS,
-  makeClient,
   msToShort,
   makeMetamaskClient,
+  publicArkivClient,
 } from "./helpers";
 import OrdersExplainer from "./OrdersExplainer";
 import OpenOrdersSection from "./OpenOrdersSection";
@@ -36,7 +36,7 @@ const VALID_TAB_SET = new Set<TabKey>(VALID_TABS);
 
 const fetchMyRequests = async (showAllOrders: boolean) => {
   const arkivWalletClient = makeMetamaskClient();
-  const arkivClient = makeClient();
+  const arkivClient = publicArkivClient();
   let rawRes;
   if (showAllOrders) {
     rawRes = await arkivClient.query(`vanity_market_request="5"`);
@@ -74,7 +74,7 @@ const fetchMyRequests = async (showAllOrders: boolean) => {
 
 const fetchOrders = async (allOrders: boolean) => {
   const arkivWalletClient = makeMetamaskClient();
-  const arkivClient = makeClient();
+  const arkivClient = publicArkivClient();
 
   let rawRes;
   if (!allOrders) {
