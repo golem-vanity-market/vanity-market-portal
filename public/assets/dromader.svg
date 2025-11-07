@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Dromedary camel in a desert landscape">
+  <!-- background sky -->
+  <rect width="100%" height="100%" fill="#fff8ec"/>
+
+  <!-- sun -->
+  <circle cx="620" cy="110" r="60" fill="#ffe27a" stroke="#f9c440" stroke-width="4"/>
+
+  <!-- distant dunes -->
+  <path d="M0 350
+           Q150 280 300 330
+           Q450 380 600 340
+           Q750 300 800 340
+           L800 500 L0 500 Z"
+        fill="#f5d8a5" />
+
+  <!-- mid dunes -->
+  <path d="M0 380
+           Q120 340 260 370
+           Q400 400 540 370
+           Q700 340 800 390
+           L800 500 L0 500 Z"
+        fill="#f0c98d" />
+
+  <!-- front dunes -->
+  <path d="M0 420
+           Q200 380 400 410
+           Q600 440 800 400
+           L800 500 L0 500 Z"
+        fill="#eab97a" />
+
+  <!-- palm tree -->
+  <path d="M130 310
+           Q125 380 130 460
+           Q135 465 140 460
+           Q138 380 145 310 Z"
+        fill="#7b4a22" stroke="#4a2c14" stroke-width="3"/>
+  <g fill="#2d743d" stroke="#21572b" stroke-width="2">
+    <path d="M140 310 Q180 280 210 290 Q190 310 140 310 Z"/>
+    <path d="M140 310 Q180 330 210 340 Q190 320 140 310 Z"/>
+    <path d="M140 310 Q110 270 70 260 Q100 285 140 310 Z"/>
+    <path d="M140 310 Q100 330 60 340 Q100 320 140 310 Z"/>
+    <path d="M140 310 Q130 260 150 240 Q160 260 140 310 Z"/>
+  </g>
+
+  <!-- heat haze -->
+  <path d="M200 450 Q240 445 280 450 T360 450" stroke="#e5b26a" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- DROMEDARY CAMEL -->
+  <g transform="translate(250,40)">
+    <!-- body -->
+    <path d="M180 300
+             Q220 230 320 230
+             Q420 230 490 270
+             Q580 310 610 360
+             Q450 390 360 390
+             Q270 395 200 360
+             Q180 345 180 300 Z"
+          fill="#c6965d" stroke="#7a4f2a" stroke-width="4" />
+
+    <!-- hump -->
+    <path d="M390 255
+             Q420 215 470 245
+             Q455 275 420 285
+             Q395 280 390 255 Z"
+          fill="#b87f45" stroke="#7a4f2a" stroke-width="3" />
+
+    <!-- neck -->
+    <path d="M320 235
+             Q285 165 350 130
+             Q390 110 420 125
+             Q430 130 432 140
+             Q335 165 320 235 Z"
+          fill="#c6965d" stroke="#7a4f2a" stroke-width="4" />
+
+    <!-- head -->
+    <path d="M420 125
+             Q455 120 480 140
+             Q500 160 490 175
+             Q470 185 455 178
+             Q430 170 420 150
+             Q418 140 420 125 Z"
+          fill="#c6965d" stroke="#7a4f2a" stroke-width="3" />
+
+    <!-- muzzle -->
+    <path d="M490 160
+             Q510 165 520 160
+             Q525 150 515 145
+             Q500 148 490 160 Z"
+          fill="#b87f45" stroke="#7a4f2a" stroke-width="2"/>
+
+    <!-- eye -->
+    <circle cx="455" cy="150" r="6" fill="#2b1b11"/>
+    <circle cx="453.5" cy="148.5" r="2" fill="#ffffff"/>
+
+    <!-- ear -->
+    <path d="M440 135 Q448 128 456 136 Q450 140 440 135 Z" fill="#b87f45" stroke="#7a4f2a" stroke-width="1.5"/>
+
+    <!-- tail -->
+    <path d="M170 330 Q150 320 140 340 Q138 350 150 352 Q160 350 170 360"
+          fill="#c6965d" stroke="#7a4f2a" stroke-width="3" />
+
+    <!-- legs -->
+    <g stroke="#7a4f2a" stroke-width="4" fill="#c6965d">
+      <path d="M430 375 Q432 410 435 445 Q438 460 422 460 Q408 460 410 445 Q415 415 420 375 Z"/>
+      <path d="M480 375 Q482 410 485 445 Q488 460 472 460 Q458 460 460 445 Q465 415 470 375 Z"/>
+      <path d="M250 370 Q252 405 255 440 Q258 455 242 455 Q228 455 230 440 Q235 410 240 370 Z"/>
+      <path d="M300 365 Q302 400 305 435 Q308 450 292 450 Q278 450 280 435 Q285 405 290 365 Z"/>
+    </g>
+
+    <!-- texture lines -->
+    <path d="M360 300 Q380 290 410 295" stroke="#8a5a2f" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M220 330 Q240 320 260 330" stroke="#8a5a2f" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- caption -->
+  <text x="40" y="485" font-family="Verdana, Geneva, sans-serif" font-size="14" fill="#7a4f2a">
+    Dromedary in a stylized desert scene
+  </text>
+</svg>
