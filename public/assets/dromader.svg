@@ -1,119 +1,212 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Dromedary camel in a desert landscape">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="800"
+   height="500"
+   viewBox="0 0 800 500"
+   role="img"
+   aria-label="Dromedary camel in a desert landscape"
+   version="1.1"
+   id="svg23"
+   sodipodi:docname="dromader.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs23" />
+  <sodipodi:namedview
+     id="namedview23"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.2091526"
+     inkscape:cx="447.42078"
+     inkscape:cy="251.00223"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
   <!-- background sky -->
-  <rect width="100%" height="100%" fill="#fff8ec"/>
-
+  <rect
+     width="100%"
+     height="100%"
+     fill="#fff8ec"
+     id="rect1"
+     x="-3.5087719"
+     y="-2.9239767" />
   <!-- sun -->
-  <circle cx="620" cy="110" r="60" fill="#ffe27a" stroke="#f9c440" stroke-width="4"/>
-
+  <circle
+     cx="620"
+     cy="110"
+     r="60"
+     fill="#ffe27a"
+     stroke="#f9c440"
+     stroke-width="4"
+     id="circle1" />
   <!-- distant dunes -->
-  <path d="M0 350
-           Q150 280 300 330
-           Q450 380 600 340
-           Q750 300 800 340
-           L800 500 L0 500 Z"
-        fill="#f5d8a5" />
-
+  <path
+     d="M0 350            Q150 280 300 330            Q450 380 600 340            Q750 300 800 340            L800 500 L0 500 Z"
+     fill="#f5d8a5"
+     id="path1" />
   <!-- mid dunes -->
-  <path d="M0 380
-           Q120 340 260 370
-           Q400 400 540 370
-           Q700 340 800 390
-           L800 500 L0 500 Z"
-        fill="#f0c98d" />
-
+  <path
+     d="M0 380            Q120 340 260 370            Q400 400 540 370            Q700 340 800 390            L800 500 L0 500 Z"
+     fill="#f0c98d"
+     id="path2" />
   <!-- front dunes -->
-  <path d="M0 420
-           Q200 380 400 410
-           Q600 440 800 400
-           L800 500 L0 500 Z"
-        fill="#eab97a" />
-
+  <path
+     d="M0 420            Q200 380 400 410            Q600 440 800 400            L800 500 L0 500 Z"
+     fill="#eab97a"
+     id="path3" />
   <!-- palm tree -->
-  <path d="M130 310
-           Q125 380 130 460
-           Q135 465 140 460
-           Q138 380 145 310 Z"
-        fill="#7b4a22" stroke="#4a2c14" stroke-width="3"/>
-  <g fill="#2d743d" stroke="#21572b" stroke-width="2">
-    <path d="M140 310 Q180 280 210 290 Q190 310 140 310 Z"/>
-    <path d="M140 310 Q180 330 210 340 Q190 320 140 310 Z"/>
-    <path d="M140 310 Q110 270 70 260 Q100 285 140 310 Z"/>
-    <path d="M140 310 Q100 330 60 340 Q100 320 140 310 Z"/>
-    <path d="M140 310 Q130 260 150 240 Q160 260 140 310 Z"/>
+  <path
+     d="M130 310            Q125 380 130 460            Q135 465 140 460            Q138 380 145 310 Z"
+     fill="#7b4a22"
+     stroke="#4a2c14"
+     stroke-width="3"
+     id="path4" />
+  <g
+     fill="#2d743d"
+     stroke="#21572b"
+     stroke-width="2"
+     id="g9">
+    <path
+       d="M140 310 Q180 280 210 290 Q190 310 140 310 Z"
+       id="path5" />
+    <path
+       d="M140 310 Q180 330 210 340 Q190 320 140 310 Z"
+       id="path6" />
+    <path
+       d="M140 310 Q110 270 70 260 Q100 285 140 310 Z"
+       id="path7" />
+    <path
+       d="M 140,310 C 97.97237,338.25991 84.038582,335.90105 60,340 77.000883,331.49956 85.111241,322.28638 102.11212,316.4956 111.77791,313.20327 123.3045,306.21375 140,310 Z"
+       id="path8"
+       sodipodi:nodetypes="ccsc" />
+    <path
+       d="M140 310 Q130 260 150 240 Q160 260 140 310 Z"
+       id="path9" />
   </g>
-
   <!-- heat haze -->
-  <path d="M200 450 Q240 445 280 450 T360 450" stroke="#e5b26a" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.5"/>
-
+  <path
+     d="M200 450 Q240 445 280 450 T360 450"
+     stroke="#e5b26a"
+     stroke-width="3"
+     fill="none"
+     stroke-linecap="round"
+     opacity="0.5"
+     id="path10" />
   <!-- DROMEDARY CAMEL -->
-  <g transform="translate(250,40)">
-    <!-- body -->
-    <path d="M180 300
-             Q220 230 320 230
-             Q420 230 490 270
-             Q580 310 610 360
-             Q450 390 360 390
-             Q270 395 200 360
-             Q180 345 180 300 Z"
-          fill="#c6965d" stroke="#7a4f2a" stroke-width="4" />
-
-    <!-- hump -->
-    <path d="M390 255
-             Q420 215 470 245
-             Q455 275 420 285
-             Q395 280 390 255 Z"
-          fill="#b87f45" stroke="#7a4f2a" stroke-width="3" />
-
-    <!-- neck -->
-    <path d="M320 235
-             Q285 165 350 130
-             Q390 110 420 125
-             Q430 130 432 140
-             Q335 165 320 235 Z"
-          fill="#c6965d" stroke="#7a4f2a" stroke-width="4" />
-
-    <!-- head -->
-    <path d="M420 125
-             Q455 120 480 140
-             Q500 160 490 175
-             Q470 185 455 178
-             Q430 170 420 150
-             Q418 140 420 125 Z"
-          fill="#c6965d" stroke="#7a4f2a" stroke-width="3" />
-
-    <!-- muzzle -->
-    <path d="M490 160
-             Q510 165 520 160
-             Q525 150 515 145
-             Q500 148 490 160 Z"
-          fill="#b87f45" stroke="#7a4f2a" stroke-width="2"/>
-
-    <!-- eye -->
-    <circle cx="455" cy="150" r="6" fill="#2b1b11"/>
-    <circle cx="453.5" cy="148.5" r="2" fill="#ffffff"/>
-
-    <!-- ear -->
-    <path d="M440 135 Q448 128 456 136 Q450 140 440 135 Z" fill="#b87f45" stroke="#7a4f2a" stroke-width="1.5"/>
-
-    <!-- tail -->
-    <path d="M170 330 Q150 320 140 340 Q138 350 150 352 Q160 350 170 360"
-          fill="#c6965d" stroke="#7a4f2a" stroke-width="3" />
-
-    <!-- legs -->
-    <g stroke="#7a4f2a" stroke-width="4" fill="#c6965d">
-      <path d="M430 375 Q432 410 435 445 Q438 460 422 460 Q408 460 410 445 Q415 415 420 375 Z"/>
-      <path d="M480 375 Q482 410 485 445 Q488 460 472 460 Q458 460 460 445 Q465 415 470 375 Z"/>
-      <path d="M250 370 Q252 405 255 440 Q258 455 242 455 Q228 455 230 440 Q235 410 240 370 Z"/>
-      <path d="M300 365 Q302 400 305 435 Q308 450 292 450 Q278 450 280 435 Q285 405 290 365 Z"/>
-    </g>
-
-    <!-- texture lines -->
-    <path d="M360 300 Q380 290 410 295" stroke="#8a5a2f" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <path d="M220 330 Q240 320 260 330" stroke="#8a5a2f" stroke-width="2" fill="none" stroke-linecap="round"/>
-  </g>
-
+  <ellipse
+     cx="-417.2644"
+     cy="232.37614"
+     fill="#ffffff"
+     id="circle16"
+     rx="2.3758817"
+     ry="1.9916239"
+     transform="scale(-1,1)"
+     style="stroke-width:1.08764" />
+  <path
+     d="m 484.49156,293.13627 q -21.86737,-22.24586 -48.84868,-9.93841 -9.24769,8.08477 6.44036,17.68342 15.42701,4.56241 23.15117,20.37142"
+     fill="#c6965d"
+     stroke="#7a4f2a"
+     stroke-width="3.9558"
+     id="path17" />
+  <path
+     d="m 736.75504,394.92591 c 8.38426,23.83762 6.38978,55.61913 15.66164,79.31611 5.49534,9.91476 1.14189,15.99721 -13.06034,18.24736 -12.42696,1.96888 -19.169,-2.35565 -20.22615,-12.97358 -1.22661,-21.37651 -3.39737,-46.19857 -6.51227,-74.46617 z"
+     id="path19"
+     style="fill:#c6965d;stroke:#7a4f2a;stroke-width:4.79339"
+     sodipodi:nodetypes="ccsccc" />
+  <path
+     d="m 526.14029,384.58233 q 8.32413,37.93334 18.18332,75.7601 6.85691,16.02875 -17.70428,17.73405 -21.49109,1.49211 -20.67263,-15.06955 3.17199,-33.2299 4.84284,-77.3588 z"
+     id="path21"
+     style="fill:#c6965d;stroke:#7a4f2a;stroke-width:5.19858" />
+  <path
+     d="m 610,340 q 20,-10 50,-5"
+     stroke="#8a5a2f"
+     stroke-width="2"
+     fill="none"
+     stroke-linecap="round"
+     id="path22" />
+  <path
+     d="m 470,370 q 20,-10 40,0"
+     stroke="#8a5a2f"
+     stroke-width="2"
+     fill="none"
+     stroke-linecap="round"
+     id="path23" />
   <!-- caption -->
-  <text x="40" y="485" font-family="Verdana, Geneva, sans-serif" font-size="14" fill="#7a4f2a">
+  <text
+     x="40"
+     y="485"
+     font-family="Verdana, Geneva, sans-serif"
+     font-size="14"
+     fill="#7a4f2a"
+     id="text23">
     Dromedary in a stylized desert scene
   </text>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Layer 1">
+    <path
+       d="m 430,340 c 26.66667,-46.66667 73.33333,-70 140,-70 66.66667,0 123.33333,13.33333 170,40 60,26.66667 60.04333,69.81595 46.96231,103.14928 C 727.07927,415.60542 670,430 610,430 550,433.33333 508.24503,414.23605 461.57836,390.90272 448.24503,380.90272 430,370 430,340 Z"
+       fill="#c6965d"
+       stroke="#7a4f2a"
+       stroke-width="4"
+       id="path11"
+       sodipodi:nodetypes="csccccc" />
+  </g>
+  <path
+     d="m 460.69672,266.45843 q -40.68468,-9.9132 -72.55089,6.31036 -25.96908,16.93355 -15.96029,33.18359 22.39817,12.72663 40.92275,7.93585 30.43783,-4.35949 44.61268,-22.71298 3.54915,-9.60274 2.97575,-24.71682 z"
+     fill="#c6965d"
+     stroke="#7a4f2a"
+     stroke-width="3.26293"
+     id="path14" />
+  <ellipse
+     cx="-430.19565"
+     cy="280.17615"
+     fill="#2b1b11"
+     id="circle15"
+     rx="7.1276455"
+     ry="5.9748716"
+     transform="scale(-1,1)"
+     style="stroke-width:1.08764" />
+  <path
+     d="m 412.24208,302.03997 c -7.29917,-4.46885 -11.4332,-0.48376 -15.95645,-0.99687 -5.80477,-0.65845 -9.24428,-7.54403 -15.92655,-3.09202 4.34065,9.72012 23.46712,13.93849 31.883,4.08889 z"
+     fill="#b87f45"
+     stroke="#7a4f2a"
+     stroke-width="2.10595"
+     id="path16"
+     sodipodi:nodetypes="cscc" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2">
+    <path
+       d="m 697.16006,404.8073 c -10.14194,25.10875 -35.61731,48.12486 -44.85928,73.53428 -2.41806,11.40518 -10.82675,14.70241 -25.22609,9.8917 -12.59941,-4.20937 -15.44018,-11.26498 -8.52234,-21.16681 14.73565,-19.50301 31.1773,-42.50707 49.32491,-69.0122 z"
+       id="path18"
+       style="fill:#c6965d;stroke:#7a4f2a;stroke-width:5.13604"
+       sodipodi:nodetypes="ccsccc" />
+    <path
+       d="m 545.59202,271.09538 c 24.50486,-26.62362 54.81608,-31.40569 86.79852,-29.23271 12.64201,-2.51845 81.46012,24.63829 74.6153,52.28905 -65.82939,5.81144 -112.68159,-2.80588 -161.41382,-23.05634 z"
+       fill="#c6965d"
+       stroke="#7a4f2a"
+       stroke-width="3.34219"
+       id="path13"
+       sodipodi:nodetypes="cccc" />
+  </g>
+  <path
+     d="m 491.41465,386.47022 c -18.66543,20.81702 -52.6762,41.70424 -70.66031,62.99793 -6.53951,9.943 -15.25977,11.10117 -26.16077,3.47448 -9.53837,-6.67334 -9.33452,-13.78986 0.61155,-21.34954 20.57346,-14.64268 60.47048,-47.02074 86.76625,-67.33875 z"
+     id="path20"
+     style="fill:#c6965d;stroke:#7a4f2a;stroke-width:4.87232"
+     sodipodi:nodetypes="ccsccc" />
 </svg>
