@@ -21,7 +21,7 @@ async function cancelRequest(requestId: Hex): Promise<void> {
     payload: requestBodyUpdated,
     expiresIn: ExpirationTime.fromDays(7),
     attributes: entity.attributes,
-    contentType: entity.contentType,
+    contentType: entity.contentType!,
   };
   await makeMetamaskClient().updateEntity(updateBody);
 }
