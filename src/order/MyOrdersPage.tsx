@@ -55,12 +55,12 @@ function getConnectedAddress(): string {
 }
 
 const fetchMyRequests = async (showAllOrders: boolean) => {
-  const arkivWalletClient = makeMetamaskClient();
   const arkivClient = publicArkivClient();
   let rawRes;
   if (showAllOrders) {
     rawRes = await arkivClient.query(`vanity_market_request="5"`);
   } else {
+    console.log("Doing fetch for my address");
     rawRes = await arkivClient.query(
       `vanity_market_request="5" && $owner="${getConnectedAddress()}"`,
     );
