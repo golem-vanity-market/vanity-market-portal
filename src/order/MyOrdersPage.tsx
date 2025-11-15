@@ -18,6 +18,7 @@ import {
   msToShort,
   makeMetamaskClient,
   publicArkivClient,
+  getEthereumGlobal,
 } from "./helpers";
 import OrdersExplainer from "./OrdersExplainer";
 import OpenOrdersSection from "./OpenOrdersSection";
@@ -72,14 +73,35 @@ const fetchMyRequests = async (showAllOrders: boolean) => {
     );
 };
 
-const fetchOrders = async (allOrders: boolean) => {
+async function fetchOrders(allOrders: boolean) {
   const arkivWalletClient = makeMetamaskClient();
   const arkivClient = publicArkivClient();
+
+  let address = "";
+
+  try {
+    address = arkivWalletClient.account.selectedAddress;
+  } catch (e) {
+    console.error("Method 1 to get address failed", e);
+  }
+  try {
+    address = getEthereumGlobal().selectedAddress;
+  } catch (e) {
+    console.error("Method 2 to get address failed", e);
+  }
+
+  //normalize address
+  try {
+    address = getAddress(address);
+  } catch (e) {
+    console.error("Failed to normalize address", e);
+    throw new Error("Failed to normalize address");
+  }
 
   let rawRes;
   if (!allOrders) {
     rawRes = await arkivClient.query(
-      `vanity_market_order="5" && requestor="${getAddress(arkivWalletClient.account.selectedAddress)}"`,
+      `vanity_market_order="5" && requestor="${address}"`,
     );
   } else {
     rawRes = await arkivClient.query(`vanity_market_order="5"`);
