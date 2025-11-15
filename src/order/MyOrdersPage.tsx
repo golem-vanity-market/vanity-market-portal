@@ -35,6 +35,25 @@ const VALID_TABS = ["awaiting", "queued", "processing", "completed"] as const;
 type TabKey = (typeof VALID_TABS)[number];
 const VALID_TAB_SET = new Set<TabKey>(VALID_TABS);
 
+function getConnectedAddress(): string {
+  let address = "";
+
+  try {
+    address = getEthereumGlobal().selectedAddress;
+  } catch (e) {
+    console.error("Method 2 to get address failed", e);
+  }
+
+  //normalize address
+  try {
+    address = getAddress(address);
+  } catch (e) {
+    console.error("Failed to normalize address", e);
+    throw new Error("Failed to normalize address");
+  }
+  return address;
+}
+
 const fetchMyRequests = async (showAllOrders: boolean) => {
   const arkivWalletClient = makeMetamaskClient();
   const arkivClient = publicArkivClient();
@@ -43,7 +62,7 @@ const fetchMyRequests = async (showAllOrders: boolean) => {
     rawRes = await arkivClient.query(`vanity_market_request="5"`);
   } else {
     rawRes = await arkivClient.query(
-      `vanity_market_request="5" && $owner="${getAddress(arkivWalletClient.account.selectedAddress)}"`,
+      `vanity_market_request="5" && $owner="${getConnectedAddress()}"`,
     );
   }
   return rawRes
@@ -77,31 +96,10 @@ async function fetchOrders(allOrders: boolean) {
   const arkivWalletClient = makeMetamaskClient();
   const arkivClient = publicArkivClient();
 
-  let address = "";
-
-  try {
-    address = arkivWalletClient.account.selectedAddress;
-  } catch (e) {
-    console.error("Method 1 to get address failed", e);
-  }
-  try {
-    address = getEthereumGlobal().selectedAddress;
-  } catch (e) {
-    console.error("Method 2 to get address failed", e);
-  }
-
-  //normalize address
-  try {
-    address = getAddress(address);
-  } catch (e) {
-    console.error("Failed to normalize address", e);
-    throw new Error("Failed to normalize address");
-  }
-
   let rawRes;
   if (!allOrders) {
     rawRes = await arkivClient.query(
-      `vanity_market_order="5" && requestor="${address}"`,
+      `vanity_market_order="5" && requestor="${getConnectedAddress()}"`,
     );
   } else {
     rawRes = await arkivClient.query(`vanity_market_order="5"`);
