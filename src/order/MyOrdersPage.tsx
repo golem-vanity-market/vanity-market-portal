@@ -60,7 +60,6 @@ const fetchMyRequests = async (showAllOrders: boolean) => {
   if (showAllOrders) {
     rawRes = await arkivClient.query(`vanity_market_request="5"`);
   } else {
-    console.log("Doing fetch for my address");
     rawRes = await arkivClient.query(
       `vanity_market_request="5" && $owner="${getConnectedAddress()}"`,
     );
@@ -150,6 +149,10 @@ export const MyOrdersPage = () => {
     queryFn: () => fetchMyRequests(showAllOrders),
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
+    retry: (failureCount, error) => {
+      console.error(`Fetch my requests failed attempt #${failureCount}:`, error);
+      return false;
+    }
   });
 
   type VanityOrder = z.infer<typeof VanityOrderSchema> & { orderId: string };
@@ -164,6 +167,10 @@ export const MyOrdersPage = () => {
     queryFn: () => fetchOrders(showAllOrders),
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
+    retry: (failureCount, error) => {
+      console.error(`Fetch my requests failed attempt #${failureCount}:`, error);
+      return false;
+    }
   });
 
   const { isConnected } = useAppKitAccount();
