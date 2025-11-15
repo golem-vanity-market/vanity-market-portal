@@ -132,7 +132,7 @@ async function fetchOrders(allOrders: boolean) {
     .sort(
       (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime(),
     );
-};
+}
 
 export const MyOrdersPage = () => {
   const [showAllOrders, setShowAllOrders] = useState(() => {

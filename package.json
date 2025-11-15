@@ -12,8 +12,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "format": "oxfmt .",
-    "format:check": "oxfmt --check .",
+    "format": "prettier --write .",
+    "format:check": "prettier .",
     "serve": "vite preview",
     "lint": "eslint src --max-warnings=0",
     "oxlint": "oxlint src",

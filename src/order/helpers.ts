@@ -4,7 +4,7 @@ import {
   http,
   PublicArkivClient,
 } from "@arkiv-network/sdk";
-import {mendoza} from "@arkiv-network/sdk/chains";
+import { mendoza } from "@arkiv-network/sdk/chains";
 import { custom } from "viem";
 
 export const getEthereumGlobal = () => {

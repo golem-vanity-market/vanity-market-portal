@@ -9,8 +9,7 @@ on:
       - main
   workflow_dispatch:
   schedule:
-    - cron: '0 5 * * *'
-
+    - cron: "0 5 * * *"
 
 jobs:
   checks:
@@ -38,4 +37,3 @@ jobs:
         run: |
           bun install
           bun run build
-

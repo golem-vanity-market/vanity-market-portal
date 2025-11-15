@@ -9,7 +9,7 @@ on:
       - main
   workflow_dispatch:
   schedule:
-    - cron: '0 5 * * *'
+    - cron: "0 5 * * *"
 
 jobs:
   checks:
@@ -35,5 +35,3 @@ jobs:
           bun run lint
           bun run oxlint
           bun run format:check
-
-
