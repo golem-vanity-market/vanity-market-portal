@@ -242,7 +242,7 @@ function OrderResultsPage() {
       return s;
     };
     const rows = results.map(({ id, order }) => [
-      order.proof.address,
+      getAddress(order.proof.address),
       order.proof.salt,
       order.provider.id,
       order.provider.name,

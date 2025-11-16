@@ -150,9 +150,12 @@ export const MyOrdersPage = () => {
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
     retry: (failureCount, error) => {
-      console.error(`Fetch my requests failed attempt #${failureCount}:`, error);
+      console.error(
+        `Fetch my requests failed attempt #${failureCount}:`,
+        error,
+      );
       return false;
-    }
+    },
   });
 
   type VanityOrder = z.infer<typeof VanityOrderSchema> & { orderId: string };
@@ -168,9 +171,12 @@ export const MyOrdersPage = () => {
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
     retry: (failureCount, error) => {
-      console.error(`Fetch my requests failed attempt #${failureCount}:`, error);
+      console.error(
+        `Fetch my requests failed attempt #${failureCount}:`,
+        error,
+      );
       return false;
-    }
+    },
   });
 
   const { isConnected } = useAppKitAccount();
