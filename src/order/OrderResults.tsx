@@ -129,7 +129,7 @@ function OrderResultsPage() {
 
   const resultsWithProblemAssigned = results.map((result) => {
     const problem = orderData
-      ? matchProblemToAddress(result.order.proof.address, orderData.problems)
+      ? matchProblemToAddress(getAddress(result.order.proof.address), orderData.problems)
       : null;
     const matchInfo = problem
       ? getProblemMatchInfo(result.order.proof.address, problem)
