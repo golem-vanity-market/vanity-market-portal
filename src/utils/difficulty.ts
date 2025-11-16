@@ -161,7 +161,7 @@ export function matchProblemToAddress(
   for (const problem of problems) {
     switch (problem.type) {
       case "user-prefix": {
-        if (address.startsWith(problem.specifier.toUpperCase())) {
+        if (address.replace("0x", "").startsWith(problem.specifier.replace("0x", "").toUpperCase())) {
           return problem;
         }
         break;
