@@ -100,7 +100,7 @@ async function fetchOrders(allOrders: boolean) {
 
   const whereConditions = [eq("vanity_market_order", "5")];
   if (!allOrders) {
-    whereConditions.push(eq("vanity_market_order", "5"));
+    whereConditions.push(eq("$owner", getConnectedAddress()));
   }
   const rawRes = await query
     .where(whereConditions)
