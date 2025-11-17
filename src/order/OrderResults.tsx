@@ -54,7 +54,7 @@ const fetchOrderResults = async (orderId: string) => {
   const query = arkivClient.buildQuery();
 
   const rawRes = await query
-    .where([eq("vanity_market_order", "5"), eq("orderId", `${orderId}`)])
+    .where([eq("vanity_market_order_result", "2"), eq("orderId", `${orderId}`)])
     .limit(20)
     .withPayload(true)
     .withMetadata(true)
