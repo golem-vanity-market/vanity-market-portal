@@ -31,6 +31,8 @@ import {
 import { z } from "zod";
 import { getAddress } from "viem";
 
+import { eq } from "@arkiv-network/sdk/query";
+
 const VALID_TABS = ["awaiting", "queued", "processing", "completed"] as const;
 type TabKey = (typeof VALID_TABS)[number];
 const VALID_TAB_SET = new Set<TabKey>(VALID_TABS);
@@ -92,18 +94,20 @@ const fetchMyRequests = async (showAllOrders: boolean) => {
 };
 
 async function fetchOrders(allOrders: boolean) {
-  const arkivWalletClient = makeMetamaskClient();
   const arkivClient = publicArkivClient();
 
-  let rawRes;
+  const query = arkivClient.buildQuery();
+
+  const whereConditions = [eq("vanity_market_order", "5")];
   if (!allOrders) {
-    rawRes = await arkivClient.query(
-      `vanity_market_order="5" && requestor="${getConnectedAddress()}"`,
-    );
-  } else {
-    rawRes = await arkivClient.query(`vanity_market_order="5"`);
+    whereConditions.push(eq("vanity_market_order", "5"));
   }
-  return rawRes
+  const rawRes = await query
+    .where(whereConditions)
+    .withPayload(true)
+    .withMetadata(true)
+    .fetch();
+  return rawRes.entities
     .map((entity) => {
       let jsonParsed = null;
       try {

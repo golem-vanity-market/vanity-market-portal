@@ -47,13 +47,20 @@ import { getAddress } from "viem";
 import { Badge } from "@/components/ui/badge";
 import { displayDifficulty } from "@/utils";
 import { CancelRequestButton } from "./CancelRequestButton";
+import { eq } from "@arkiv-network/sdk/query";
 
 const fetchOrderResults = async (orderId: string) => {
   const arkivClient = publicArkivClient();
-  const rawRes = await arkivClient.query(
-    `vanity_market_order_result="2" && orderId="${orderId}"`,
-  );
-  return rawRes
+  const query = arkivClient.buildQuery();
+
+  const rawRes = await query
+    .where([eq("vanity_market_order", "5"), eq("orderId", `${orderId}`)])
+    .limit(20)
+    .withPayload(true)
+    .withMetadata(true)
+    .withAttributes(true)
+    .fetch();
+  return rawRes.entities
     .map((entity) => {
       let jsonParsed = null;
       try {
@@ -129,7 +136,10 @@ function OrderResultsPage() {
 
   const resultsWithProblemAssigned = results.map((result) => {
     const problem = orderData
-      ? matchProblemToAddress(getAddress(result.order.proof.address), orderData.problems)
+      ? matchProblemToAddress(
+          getAddress(result.order.proof.address),
+          orderData.problems,
+        )
       : null;
     const matchInfo = problem
       ? getProblemMatchInfo(result.order.proof.address, problem)
