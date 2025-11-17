@@ -48,6 +48,7 @@ import { Badge } from "@/components/ui/badge";
 import { displayDifficulty } from "@/utils";
 import { CancelRequestButton } from "./CancelRequestButton";
 import { eq } from "@arkiv-network/sdk/query";
+import {object} from "zod";
 
 const fetchOrderResults = async (orderId: string) => {
   const arkivClient = publicArkivClient();
@@ -55,11 +56,21 @@ const fetchOrderResults = async (orderId: string) => {
 
   const rawRes = await query
     .where([eq("vanity_market_order_result", "2"), eq("orderId", `${orderId}`)])
-    .limit(20)
+    .limit(100)
     .withPayload(true)
     .withMetadata(true)
     .withAttributes(true)
     .fetch();
+
+  const entities = [...rawRes.entities];
+  let pageNumber = 1;
+  if (rawRes.hasNextPage()) {
+    pageNumber += 1;
+    console.warn(`Not all results downloaded downloading next page ${pageNumber}`);
+    await rawRes.next();
+    entities.push(...rawRes.entities);
+  }
+
   return rawRes.entities
     .map((entity) => {
       let jsonParsed = null;
