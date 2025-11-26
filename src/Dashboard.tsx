@@ -15,7 +15,7 @@ import { Footer } from "./Footer.tsx";
 import { assetsUrl } from "./utils";
 import { ConnectButton } from "@/components/ConnectButton";
 import { createPublicClient } from "viem";
-import { mendoza } from "@arkiv-network/sdk/chains";
+import { rosario } from "@arkiv-network/sdk/chains";
 import { http } from "@arkiv-network/sdk";
 
 const Dashboard = () => {
@@ -23,7 +23,7 @@ const Dashboard = () => {
   const client = useMemo(
     () =>
       createPublicClient({
-        chain: mendoza,
+        chain: rosario,
         transport: http(),
       }),
     [],

@@ -4,7 +4,7 @@ import {
   http,
   PublicArkivClient,
 } from "@arkiv-network/sdk";
-import { mendoza } from "@arkiv-network/sdk/chains";
+import { rosario } from "@arkiv-network/sdk/chains";
 import { custom } from "viem";
 
 export const getEthereumGlobal = () => {
@@ -53,13 +53,13 @@ export const msToShort = (ms: number) => {
 export const makeMetamaskClient = () => {
   return createWalletClient({
     account: getEthereumGlobal().selectedAddress,
-    chain: mendoza,
+    chain: rosario,
     transport: custom(getEthereumGlobal()),
   });
 };
 
 const clientGlobal = createPublicClient({
-  chain: mendoza,
+  chain: rosario,
   transport: http(),
 });
 

@@ -16,7 +16,6 @@ import { useEffect, useState } from "react";
 import {
   REQUEST_TTL_MS,
   msToShort,
-  makeMetamaskClient,
   publicArkivClient,
   getEthereumGlobal,
 } from "./helpers";
@@ -60,11 +59,13 @@ const fetchMyRequests = async (showAllOrders: boolean) => {
   const arkivClient = publicArkivClient();
   let rawRes;
   if (showAllOrders) {
-    rawRes = await arkivClient.query(`vanity_market_request="5"`);
+    rawRes = (await arkivClient.query(`vanity_market_request="5"`)).entities;
   } else {
-    rawRes = await arkivClient.query(
-      `vanity_market_request="5" && $owner="${getConnectedAddress()}"`,
-    );
+    rawRes = (
+      await arkivClient.query(
+        `vanity_market_request="5" && $owner="${getConnectedAddress()}"`,
+      )
+    ).entities;
   }
   return rawRes
     .map((entity) => {
