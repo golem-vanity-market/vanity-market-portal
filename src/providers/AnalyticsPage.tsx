@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProviderData } from "db-vanity-model/src/provider";
 import {
   fetchAllEntities,
@@ -25,10 +25,11 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { escapeForJS } from "@/utils";
 import ExperimentalAlert from "@/components/ExperimentalAlert";
 import { useFilterState } from "./useFilterState";
-import { FilterCriteria, sortOptions } from "./provider-types";
+import { type FilterCriteria, sortOptions } from "./provider-types";
 import { FilterHistory } from "./FilterHistory";
 import ProviderAnalytics from "@/providers/ProviderAnalytics.tsx";
 import { publicArkivClient } from "@/order/helpers.ts";
+import { useAppKitNetwork } from "@reown/appkit/react";
 
 const buildQuery = (appliedFilters: FilterCriteria) => {
   let qbuild = `$owner = "${import.meta.env.VITE_ARKIV_OWNER_ADDRESS}"`;
@@ -127,6 +128,7 @@ const AnalyticsPage = () => {
   const [providerData, setProviderData] = useState<ProviderData | null>(null);
   const [displayLimit, setDisplayLimit] = useState(50);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const { caipNetwork } = useAppKitNetwork();
   const {
     stagedFilters,
     appliedFilters,
@@ -187,7 +189,7 @@ const AnalyticsPage = () => {
   const copyCurlQuery = () => {
     const qbuild = buildQuery(appliedFilters);
     let completeQuery = `curl ${
-      import.meta.env.VITE_ARKIV_RPC
+      caipNetwork?.rpcUrls.default.http[0]
     } -X POST -H "Content-Type: application/json" --data '{"method":"golembase_queryEntities","params":["%%QUERY%%"], "id": 1, "jsonrpc":"2.0"}' | jq '.result[] | .value' | wc -l`;
     completeQuery = completeQuery.replace("%%QUERY%%", escapeForJS(qbuild));
     window.navigator.clipboard.writeText(completeQuery);

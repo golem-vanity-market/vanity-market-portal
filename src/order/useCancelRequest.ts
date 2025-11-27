@@ -1,10 +1,17 @@
-import { Hex } from "@arkiv-network/sdk";
-import { publicArkivClient, makeMetamaskClient } from "./helpers";
+import type { Hex, WalletArkivClient } from "@arkiv-network/sdk";
+import { publicArkivClient } from "./helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/components/Toast";
 import { ExpirationTime } from "@arkiv-network/sdk/utils";
+import { useArkivWalletClient } from "./useArkivWalletClient";
 
-async function cancelRequest(requestId: Hex): Promise<void> {
+async function cancelRequest(
+  requestId: Hex,
+  walletClient: WalletArkivClient | null,
+): Promise<void> {
+  if (!walletClient) {
+    throw new Error("Arkiv wallet client not available");
+  }
   const client = publicArkivClient();
   const entity = await client.getEntity(requestId);
   const requestBody = entity.payload;
@@ -21,14 +28,15 @@ async function cancelRequest(requestId: Hex): Promise<void> {
     payload: requestBodyUpdated,
     expiresIn: ExpirationTime.fromDays(7),
     attributes: entity.attributes,
-    contentType: entity.contentType!,
+    contentType: entity.contentType || "application/json",
   };
-  await makeMetamaskClient().updateEntity(updateBody);
+  await walletClient.updateEntity(updateBody);
 }
 export function useCancelRequest() {
   const queryClient = useQueryClient();
+  const walletClient = useArkivWalletClient();
   return useMutation({
-    mutationFn: cancelRequest,
+    mutationFn: (requestId: Hex) => cancelRequest(requestId, walletClient),
     onSuccess: () => {
       toast({
         title: "Order cancelled",

@@ -17,8 +17,12 @@ import { ConnectButton } from "@/components/ConnectButton";
 import { createPublicClient } from "viem";
 import { rosario } from "@arkiv-network/sdk/chains";
 import { http } from "@arkiv-network/sdk";
+import { useAppKitNetwork } from "@reown/appkit/react";
 
 const Dashboard = () => {
+  const { caipNetwork } = useAppKitNetwork();
+  const arkivNetworkName = caipNetwork?.name || "Arkiv";
+
   const [current_block, setCurrentBlock] = React.useState<bigint | null>(null);
   const client = useMemo(
     () =>
@@ -43,8 +47,8 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [client]);
 
-  const lightLogo = assetsUrl() + "logo_light.svg";
-  const darkLogo = assetsUrl() + "logo_dark.svg";
+  const lightLogo = `${assetsUrl()}logo_light.svg`;
+  const darkLogo = `${assetsUrl()}logo_dark.svg`;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -105,15 +109,11 @@ const Dashboard = () => {
             {current_block !== null ? (
               <Badge variant="outline" className="h-9 font-heading text-sm">
                 <Link
-                  to={
-                    import.meta.env.VITE_ARKIV_LANDING_PAGE ||
-                    "https://golem.network"
-                  }
+                  to={`https://${arkivNetworkName}.hoodi.arkiv.network`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {import.meta.env.VITE_ARKIV_NETWORK_NAME || "Arkiv"} Block:{" "}
-                  {current_block.toString()}
+                  {arkivNetworkName} Block: {current_block.toString()}
                 </Link>
               </Badge>
             ) : (

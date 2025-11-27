@@ -1,3 +1,14 @@
+import type { ProviderDataEntry } from "db-vanity-model/src/provider";
+import {
+  CircleDollarSign,
+  Cpu,
+  ExternalLink,
+  GaugeCircle,
+  Hash,
+  Timer,
+  TrendingUp,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -20,20 +31,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ExternalLink } from "lucide-react";
-import { ProviderDataEntry } from "db-vanity-model/src/provider";
+import { useExplorerUrl } from "@/order/useExplorerUrl";
 import { displayDifficulty, displayHours } from "@/utils";
 import { getProviderScore } from "./provider-utils";
-import {
-  CircleDollarSign,
-  Cpu,
-  GaugeCircle,
-  Hash,
-  Timer,
-  TrendingUp,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import React from "react";
 
 const getScoreClassName = (score: number) => {
   if (score > 75) return "text-green-600 bg-green-100";
@@ -48,6 +48,7 @@ interface ProviderCardProps {
 
 export const ProviderCard = ({ provider, rank }: ProviderCardProps) => {
   const score = getProviderScore(provider);
+  const explorerUrl = useExplorerUrl();
 
   const metrics = [
     {
@@ -133,7 +134,7 @@ export const ProviderCard = ({ provider, rank }: ProviderCardProps) => {
             </CardDescription>
             <CardDescription className="pt-1 font-mono text-xs break-all">
               <a
-                href={`${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${provider.key}?tab=data`}
+                href={`${explorerUrl}/entity/${provider.key}?tab=data`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 text-xs text-primary underline"

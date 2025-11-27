@@ -12,7 +12,7 @@ import {
 import { useEffect, useState, type ReactNode } from "react";
 
 import {
-  VanityOrderResult,
+  type VanityOrderResult,
   VanityOrderResultSchema,
   type Problem,
 } from "db-vanity-model/src/order-schema.ts";
@@ -48,6 +48,7 @@ import { Badge } from "@/components/ui/badge";
 import { displayDifficulty } from "@/utils";
 import { CancelRequestButton } from "./CancelRequestButton";
 import { eq } from "@arkiv-network/sdk/query";
+import { useExplorerUrl } from "./useExplorerUrl";
 
 const fetchOrderResults = async (orderId: string) => {
   const arkivClient = publicArkivClient();
@@ -111,7 +112,7 @@ function ProcessingCountdown({ started, duration }: ProcessingCountdownProps) {
     if (!isValidTiming || typeof window === "undefined") return;
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
-  }, [isValidTiming, startedAt, durationSeconds]);
+  }, [isValidTiming]);
 
   if (!isValidTiming) return null;
 
@@ -133,6 +134,8 @@ function OrderResultsPage() {
   const { orderId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const explorerUrl = useExplorerUrl();
+
   const {
     data: results = [],
     error,
@@ -260,7 +263,7 @@ function OrderResultsPage() {
     ];
     const escape = (val: string) => {
       const s = String(val ?? "");
-      if (/[",\n]/.test(s)) return '"' + s.replaceAll('"', '""') + '"';
+      if (/[",\n]/.test(s)) return `"${s.replaceAll('"', '""')}"`;
       return s;
     };
     const rows = results.map(({ id, order }) => [
@@ -437,7 +440,7 @@ function OrderResultsPage() {
         0x
         {Array.from(body).map((char, idx) => (
           <span
-            key={idx}
+            key={char + highlight[idx]}
             className={highlight[idx] ? "text-primary" : undefined}
           >
             {char}
@@ -477,7 +480,7 @@ function OrderResultsPage() {
             <div className="mt-1 text-xs text-muted-foreground">
               Order:{" "}
               <a
-                href={`${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${orderId}?tab=data`}
+                href={`${explorerUrl}/entity/${orderId}?tab=data`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-mono underline"
@@ -587,10 +590,7 @@ function OrderResultsPage() {
                   <TooltipProvider delayDuration={200}>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span
-                          className="inline-flex w-full cursor-help items-center justify-end gap-1"
-                          tabIndex={0}
-                        >
+                        <span className="inline-flex w-full cursor-help items-center justify-end gap-1">
                           Rarity
                           <Info
                             className="size-3.5 text-muted-foreground"
@@ -641,7 +641,7 @@ function OrderResultsPage() {
                     </TableCell>
                     <TableCell>
                       <a
-                        href={`${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${id}?tab=data`}
+                        href={`${explorerUrl}/entity/${id}?tab=data`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 font-mono text-sm underline"

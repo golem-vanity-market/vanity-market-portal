@@ -13,12 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Loader2, PlusCircle, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
-import {
-  REQUEST_TTL_MS,
-  msToShort,
-  publicArkivClient,
-  getEthereumGlobal,
-} from "./helpers";
+import { REQUEST_TTL_MS, msToShort, publicArkivClient } from "./helpers";
 import OrdersExplainer from "./OrdersExplainer";
 import OpenOrdersSection from "./OpenOrdersSection";
 import MyOrdersSection from "./MyOrdersSection";
@@ -27,43 +22,30 @@ import {
   VanityRequestWithTimestampSchema,
   type VanityRequestWithTimestamp,
 } from "db-vanity-model/src/order-schema.ts";
-import { z } from "zod";
-import { getAddress } from "viem";
+import type { z } from "zod";
 
 import { eq } from "@arkiv-network/sdk/query";
+import type { Entity } from "@arkiv-network/sdk";
 
 const VALID_TABS = ["awaiting", "queued", "processing", "completed"] as const;
 type TabKey = (typeof VALID_TABS)[number];
 const VALID_TAB_SET = new Set<TabKey>(VALID_TABS);
 
-function getConnectedAddress(): string {
-  let address = "";
-
-  try {
-    address = getEthereumGlobal().selectedAddress;
-  } catch (e) {
-    console.error("Method 2 to get address failed", e);
+const fetchMyRequests = async (
+  showAllOrders: boolean,
+  address: string | undefined,
+) => {
+  if (!address) {
+    throw new Error("Wallet not connected");
   }
-
-  //normalize address
-  try {
-    address = getAddress(address);
-  } catch (e) {
-    console.error("Failed to normalize address", e);
-    throw new Error("Failed to normalize address");
-  }
-  return address;
-}
-
-const fetchMyRequests = async (showAllOrders: boolean) => {
   const arkivClient = publicArkivClient();
-  let rawRes;
+  let rawRes: Entity[];
   if (showAllOrders) {
     rawRes = (await arkivClient.query(`vanity_market_request="5"`)).entities;
   } else {
     rawRes = (
       await arkivClient.query(
-        `vanity_market_request="5" && $owner="${getConnectedAddress()}"`,
+        `vanity_market_request="5" && $owner="${address}"`,
       )
     ).entities;
   }
@@ -94,14 +76,18 @@ const fetchMyRequests = async (showAllOrders: boolean) => {
     );
 };
 
-async function fetchOrders(allOrders: boolean) {
+async function fetchOrders(allOrders: boolean, address: string | undefined) {
+  if (!address) {
+    throw new Error("Wallet not connected");
+  }
+
   const arkivClient = publicArkivClient();
 
   const query = arkivClient.buildQuery();
 
   const whereConditions = [eq("vanity_market_order", "5")];
   if (!allOrders) {
-    whereConditions.push(eq("$owner", getConnectedAddress()));
+    whereConditions.push(eq("$owner", address));
   }
   const rawRes = await query
     .where(whereConditions)
@@ -137,6 +123,8 @@ async function fetchOrders(allOrders: boolean) {
 }
 
 export const MyOrdersPage = () => {
+  const { address } = useAppKitAccount();
+
   const [showAllOrders, setShowAllOrders] = useState(() => {
     return localStorage.getItem("showAllOrders") === "true";
   });
@@ -151,7 +139,7 @@ export const MyOrdersPage = () => {
     isFetching: isRequestsFetching,
   } = useQuery<{ id: string; order: VanityRequestWithTimestamp }[]>({
     queryKey: ["myRequests", showAllOrders],
-    queryFn: () => fetchMyRequests(showAllOrders),
+    queryFn: () => fetchMyRequests(showAllOrders, address),
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
     retry: (failureCount, error) => {
@@ -172,7 +160,7 @@ export const MyOrdersPage = () => {
     isFetching: isOrdersFetching,
   } = useQuery<VanityOrder[]>({
     queryKey: ["myOrders", showAllOrders],
-    queryFn: () => fetchOrders(showAllOrders),
+    queryFn: () => fetchOrders(showAllOrders, address),
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
     retry: (failureCount, error) => {

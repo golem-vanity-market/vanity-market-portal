@@ -28,6 +28,7 @@ import type { Problem } from "db-vanity-model/src/order-schema.ts";
 import { formatDateTime, formatRelative, truncateMiddle } from "./helpers";
 import { CancelRequestMenuItem } from "./CancelRequestButton";
 import { ExternalLink, MoreVertical } from "lucide-react";
+import { useExplorerUrl } from "./useExplorerUrl";
 
 type Order = {
   orderId: string;
@@ -58,6 +59,7 @@ export function MyOrdersSection({
   emptyMessage?: string;
 }) {
   const visibleCount = orders.length;
+  const explorerUrl = useExplorerUrl();
 
   return (
     <section className="rounded-2xl border border-border/60 bg-background p-4 shadow-sm sm:p-6">
@@ -158,7 +160,7 @@ export function MyOrdersSection({
                 <TableRow key={`${o.orderId}-${o.created}`} className="text-sm">
                   <TableCell>
                     <a
-                      href={`${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${o.orderId}?tab=data`}
+                      href={`${explorerUrl}/entity/${o.orderId}?tab=data`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-mono text-sm font-medium text-foreground underline underline-offset-4"
@@ -169,7 +171,7 @@ export function MyOrdersSection({
                   </TableCell>
                   <TableCell>
                     <a
-                      href={`${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${o.requestId}?tab=data`}
+                      href={`${explorerUrl}/entity/${o.requestId}?tab=data`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-mono text-sm text-muted-foreground underline underline-offset-4"
@@ -262,7 +264,7 @@ export function MyOrdersSection({
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
                           <a
-                            href={`${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${o.orderId}?tab=data`}
+                            href={`${explorerUrl}/entity/${o.orderId}?tab=data`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-2"
@@ -273,7 +275,7 @@ export function MyOrdersSection({
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <a
-                            href={`${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${o.requestId}?tab=data`}
+                            href={`${explorerUrl}/entity/${o.requestId}?tab=data`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-2"

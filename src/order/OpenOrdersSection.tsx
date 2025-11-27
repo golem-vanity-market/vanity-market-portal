@@ -31,6 +31,7 @@ import {
 import type { Problem } from "db-vanity-model/src/order-schema.ts";
 import { CancelRequestMenuItem } from "./CancelRequestButton";
 import { MoreVertical } from "lucide-react";
+import { useExplorerUrl } from "./useExplorerUrl";
 
 type PendingItem = {
   id: string;
@@ -59,6 +60,7 @@ export function OpenOrdersSection({
   emptyMessage?: string;
 }) {
   const visibleCount = pending.length;
+  const explorerUrl = useExplorerUrl();
 
   return (
     <section className="rounded-2xl border border-border/60 bg-background p-4 shadow-sm sm:p-6">
@@ -141,7 +143,7 @@ export function OpenOrdersSection({
                   <TableCell>
                     <div className="space-y-1">
                       <a
-                        href={`${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${id}?tab=data`}
+                        href={`${explorerUrl}/entity/${id}?tab=data`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-mono text-sm font-medium text-foreground underline underline-offset-4"

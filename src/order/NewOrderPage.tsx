@@ -3,7 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowLeft, CheckSquare2, Square } from "lucide-react";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { vanityDurationToSeconds } from "db-vanity-model/src/utils.ts";
 
 import { Button } from "@/components/ui/button";
@@ -33,14 +34,16 @@ import { Alert } from "@/components/ui/alert";
 import { useAppKitAccount } from "@reown/appkit/react";
 import {
   VanityRequestSchema,
-  Problem,
-  ProblemId,
+  type Problem,
+  type ProblemId,
 } from "db-vanity-model/src/order-schema.ts";
 import { problems, problemsById } from "./problem-config";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/Toast";
 import { KeyGuideSheet } from "./KeyGuideSheet";
-import { makeMetamaskClient } from "@/order/helpers.ts";
+import { useArkivWalletClient } from "./useArkivWalletClient";
+import type { WalletArkivClient } from "@arkiv-network/sdk";
+import { useExplorerUrl } from "./useExplorerUrl";
 
 const FormSchema = z
   .object({
@@ -217,8 +220,13 @@ const FormSchema = z
     }
   });
 
-async function sendOrder(data: z.infer<typeof FormSchema>) {
-  const arkivClient = makeMetamaskClient();
+async function sendOrder(
+  data: z.infer<typeof FormSchema>,
+  arkivClient: WalletArkivClient | null,
+) {
+  if (!arkivClient) {
+    throw new Error("Arkiv wallet client not available");
+  }
 
   const timestamp = new Date().toISOString();
   const utf8Encode = new TextEncoder();
@@ -251,9 +259,10 @@ async function sendOrder(data: z.infer<typeof FormSchema>) {
     contentType: "application/json",
   });
 }
-
 export const NewOrderPage = () => {
   const { isConnected } = useAppKitAccount();
+  const arkivClient = useArkivWalletClient();
+  const explorerUrl = useExplorerUrl();
   const LOCAL_STORAGE_KEY = "vanity_last_public_key";
   const [savedPublicKey, setSavedPublicKey] = useState<string | null>(() => {
     try {
@@ -287,7 +296,8 @@ export const NewOrderPage = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: sendOrder,
+    mutationFn: (formData: z.infer<typeof FormSchema>) =>
+      sendOrder(formData, arkivClient),
     onSuccess: (data) => {
       // persist last used public key
       try {
@@ -307,7 +317,7 @@ export const NewOrderPage = () => {
           label: "View in block explorer",
           onClick: () => {
             window.open(
-              `${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${data.entityKey}?tab=data`,
+              `${explorerUrl}/entity/${data.entityKey}?tab=data`,
               "_blank",
             );
           },

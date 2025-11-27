@@ -1,10 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useAppKitNetwork } from "@reown/appkit/react";
 import { ProviderData } from "db-vanity-model/src/provider";
 import {
   fetchAllEntities,
   mapValueForAnnotation,
   mapValueForNumberAnnotation,
 } from "db-vanity-model/src/query";
+import { ArrowUp, Filter, FilterX, Loader2, RefreshCw } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import ExperimentalAlert from "@/components/ExperimentalAlert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -17,17 +21,14 @@ import {
 } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowUp, Filter, FilterX, Loader2, RefreshCw } from "lucide-react";
-import { ProviderFilters } from "./ProviderFilters";
-import { ProviderCard } from "./ProviderCard";
-import { getProviderScore } from "./provider-utils";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { escapeForJS } from "@/utils";
-import ExperimentalAlert from "@/components/ExperimentalAlert";
-import { useFilterState } from "./useFilterState";
-import { FilterCriteria, sortOptions } from "./provider-types";
-import { FilterHistory } from "./FilterHistory";
 import { publicArkivClient } from "@/order/helpers.ts";
+import { escapeForJS } from "@/utils";
+import { FilterHistory } from "./FilterHistory";
+import { ProviderCard } from "./ProviderCard";
+import { ProviderFilters } from "./ProviderFilters";
+import { type FilterCriteria, sortOptions } from "./provider-types";
+import { getProviderScore } from "./provider-utils";
+import { useFilterState } from "./useFilterState";
 
 const buildQuery = (appliedFilters: FilterCriteria) => {
   let qbuild = `$owner = "${import.meta.env.VITE_ARKIV_OWNER_ADDRESS}"`;
@@ -126,6 +127,7 @@ const ProvidersPage = () => {
   const [providerData, setProviderData] = useState<ProviderData | null>(null);
   const [displayLimit, setDisplayLimit] = useState(50);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const { caipNetwork } = useAppKitNetwork();
   const {
     stagedFilters,
     appliedFilters,
@@ -186,7 +188,7 @@ const ProvidersPage = () => {
   const copyCurlQuery = () => {
     const qbuild = buildQuery(appliedFilters);
     let completeQuery = `curl ${
-      import.meta.env.VITE_ARKIV_RPC
+      caipNetwork?.rpcUrls.default.http[0]
     } -X POST -H "Content-Type: application/json" --data '{"method":"golembase_queryEntities","params":["%%QUERY%%"], "id": 1, "jsonrpc":"2.0"}' | jq '.result[] | .value' | wc -l`;
     completeQuery = completeQuery.replace("%%QUERY%%", escapeForJS(qbuild));
     window.navigator.clipboard.writeText(completeQuery);

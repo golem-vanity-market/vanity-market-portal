@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
+import type {
   VanityRequestWithTimestamp,
   Problem,
 } from "db-vanity-model/src/order-schema.ts";
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { ChevronsUpDown, ExternalLink } from "lucide-react";
+import { useExplorerUrl } from "./useExplorerUrl";
 
 const getProblemDisplayName = (problem: Problem) => {
   const config = problemsById[problem.type];
@@ -38,6 +39,7 @@ export const OrderCard = ({
   id: string;
   order: VanityRequestWithTimestamp;
 }) => {
+  const explorerUrl = useExplorerUrl();
   return (
     <Card>
       <CardHeader>
@@ -57,7 +59,7 @@ export const OrderCard = ({
             <h3 className="text-md font-medium">ID</h3>
             <p>
               <a
-                href={`${import.meta.env.VITE_ARKIV_BLOCK_EXPLORER}/entity/${id}?tab=data`}
+                href={`${explorerUrl}/entity/${id}?tab=data`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 font-mono text-sm text-muted-foreground underline"
@@ -88,8 +90,8 @@ export const OrderCard = ({
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-2 pt-2">
-              {order.problems.map((problem, index) => (
-                <div key={index} className="rounded-md bg-muted/50 p-2">
+              {order.problems.map((problem) => (
+                <div key={problem.type} className="rounded-md bg-muted/50 p-2">
                   <p className="text-sm font-medium">
                     {getProblemDisplayName(problem)}
                   </p>
