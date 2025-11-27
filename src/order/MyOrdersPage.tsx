@@ -1,3 +1,16 @@
+import type { Entity } from "@arkiv-network/sdk";
+import { eq } from "@arkiv-network/sdk/query";
+import { useAppKitAccount } from "@reown/appkit/react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  VanityOrderSchema,
+  type VanityRequestWithTimestamp,
+  VanityRequestWithTimestampSchema,
+} from "db-vanity-model/src/order-schema.ts";
+import { Loader2, PlusCircle, RefreshCw } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import type { z } from "zod";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,24 +21,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAppKitAccount } from "@reown/appkit/react";
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { Loader2, PlusCircle, RefreshCw } from "lucide-react";
-import { useEffect, useState } from "react";
-import { REQUEST_TTL_MS, msToShort, publicArkivClient } from "./helpers";
-import OrdersExplainer from "./OrdersExplainer";
-import OpenOrdersSection from "./OpenOrdersSection";
+import { msToShort, publicArkivClient, REQUEST_TTL_MS } from "./helpers";
 import MyOrdersSection from "./MyOrdersSection";
-import {
-  VanityOrderSchema,
-  VanityRequestWithTimestampSchema,
-  type VanityRequestWithTimestamp,
-} from "db-vanity-model/src/order-schema.ts";
-import type { z } from "zod";
-
-import { eq } from "@arkiv-network/sdk/query";
-import type { Entity } from "@arkiv-network/sdk";
+import OpenOrdersSection from "./OpenOrdersSection";
+import OrdersExplainer from "./OrdersExplainer";
 
 const VALID_TABS = ["awaiting", "queued", "processing", "completed"] as const;
 type TabKey = (typeof VALID_TABS)[number];
@@ -142,13 +141,6 @@ export const MyOrdersPage = () => {
     queryFn: () => fetchMyRequests(showAllOrders, address),
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
-    retry: (failureCount, error) => {
-      console.error(
-        `Fetch my requests failed attempt #${failureCount}:`,
-        error,
-      );
-      return false;
-    },
   });
 
   type VanityOrder = z.infer<typeof VanityOrderSchema> & { orderId: string };
@@ -163,13 +155,6 @@ export const MyOrdersPage = () => {
     queryFn: () => fetchOrders(showAllOrders, address),
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
-    retry: (failureCount, error) => {
-      console.error(
-        `Fetch my requests failed attempt #${failureCount}:`,
-        error,
-      );
-      return false;
-    },
   });
 
   const { isConnected } = useAppKitAccount();

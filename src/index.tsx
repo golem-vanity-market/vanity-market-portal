@@ -2,28 +2,42 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Dashboard from "./Dashboard.tsx";
 import { ThemeProvider } from "./components/theme-provider";
+import Dashboard from "./Dashboard.tsx";
+
 const container = document.getElementById("root") as HTMLDivElement;
 const root = createRoot(container);
 
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import Welcome from "./Welcome.tsx";
-import ProvidersPage from "./providers/ProvidersPage";
-import AnalyticsPage from "./providers/AnalyticsPage";
-import { NewOrderPage } from "./order/NewOrderPage";
-import { MyOrdersPage } from "./order/MyOrdersPage";
-import DetailsPage from "./provider/DetailsPage";
-import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { createAppKit } from "@reown/appkit/react";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { Toaster } from "@/components/ui/sonner";
-import OrderResultsPage from "./order/OrderResults";
 import { getArkivChainFromEnv } from "./order/helpers.ts";
+import { MyOrdersPage } from "./order/MyOrdersPage";
+import { NewOrderPage } from "./order/NewOrderPage";
+import OrderResultsPage from "./order/OrderResults";
+import DetailsPage from "./provider/DetailsPage";
+import AnalyticsPage from "./providers/AnalyticsPage";
+import ProvidersPage from "./providers/ProvidersPage";
+import Welcome from "./Welcome.tsx";
 
 const arkivChain = getArkivChainFromEnv();
 
 const queryClient = new QueryClient();
+
+queryClient.getQueryCache().subscribe((event) => {
+  if (event.type === "updated" && event.action.type === "failed") {
+    const query = event.query;
+    const error = event.action.error;
+
+    console.groupCollapsed(`🛑 Query Failed (${query.queryHash})`);
+    console.log("Error:", error);
+    console.log("Query Key:", query.queryKey);
+    console.log("Failure Count:", query.state.fetchFailureCount);
+    console.groupEnd();
+  }
+});
 
 const router = createBrowserRouter(
   [
