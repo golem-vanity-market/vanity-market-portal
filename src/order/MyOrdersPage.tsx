@@ -137,7 +137,8 @@ export const MyOrdersPage = () => {
     refetch: refetchRequests,
     isFetching: isRequestsFetching,
   } = useQuery<{ id: string; order: VanityRequestWithTimestamp }[]>({
-    queryKey: ["myRequests", showAllOrders],
+    queryKey: ["myRequests", address, showAllOrders],
+    enabled: !!address,
     queryFn: () => fetchMyRequests(showAllOrders, address),
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
@@ -151,8 +152,9 @@ export const MyOrdersPage = () => {
     refetch: refetchOrders,
     isFetching: isOrdersFetching,
   } = useQuery<VanityOrder[]>({
-    queryKey: ["myOrders", showAllOrders],
+    queryKey: ["myOrders", address, showAllOrders],
     queryFn: () => fetchOrders(showAllOrders, address),
+    enabled: !!address,
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
   });
