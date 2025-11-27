@@ -3,8 +3,8 @@ import react from "@vitejs/plugin-react";
 import compression from "vite-plugin-compression2";
 import tailwindcss from "@tailwindcss/vite";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
-import path from "path";
-import * as child from "child_process";
+import path from "node:path";
+import * as child from "node:child_process";
 
 const commitHash = child
   .execSync("git rev-parse --short HEAD")
@@ -52,6 +52,9 @@ export default defineConfig(({ mode }) => {
       alias: {
         "@": path.resolve(__dirname, "./src"),
       },
+    },
+    optimizeDeps: {
+      exclude: ["brotli-wasm", "brotli-wasm/pkg.bundler/brotli_wasm_bg.wasm"],
     },
   };
 });
