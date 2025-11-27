@@ -16,34 +16,12 @@ import { MyOrdersPage } from "./order/MyOrdersPage";
 import DetailsPage from "./provider/DetailsPage";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { createAppKit } from "@reown/appkit/react";
-import { defineChain } from "@reown/appkit/networks";
 import { WagmiProvider } from "wagmi";
 import { Toaster } from "@/components/ui/sonner";
 import OrderResultsPage from "./order/OrderResults";
+import { getArkivChainFromEnv } from "./order/helpers.ts";
 
-const arkivNetwork = defineChain({
-  id: Number(import.meta.env.VITE_ARKIV_CHAIN_ID),
-  caipNetworkId: `eip155:${import.meta.env.VITE_ARKIV_CHAIN_ID}`,
-  chainNamespace: "eip155",
-  name: import.meta.env.VITE_ARKIV_NETWORK_NAME || "Arkiv",
-  nativeCurrency: {
-    decimals: 18,
-    name: "ETH",
-    symbol: "ETH",
-  },
-  blockExplorers: {
-    default: {
-      name: "default_block_explorer",
-      url: String(import.meta.env.VITE_ARKIV_BLOCK_EXPLORER || ""),
-    },
-  },
-  rpcUrls: {
-    default: {
-      http: [import.meta.env.VITE_ARKIV_RPC || ""],
-      webSocket: [import.meta.env.VITE_ARKIV_RPC_WS || ""],
-    },
-  },
-});
+const arkivChain = getArkivChainFromEnv();
 
 const queryClient = new QueryClient();
 
@@ -90,14 +68,14 @@ const router = createBrowserRouter(
 const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "";
 
 const wagmiAdapter = new WagmiAdapter({
-  networks: [arkivNetwork],
+  networks: [arkivChain],
   projectId,
   ssr: false,
 });
 
 createAppKit({
   adapters: [wagmiAdapter],
-  networks: [arkivNetwork],
+  networks: [arkivChain],
   projectId,
   features: {
     analytics: false,
@@ -105,7 +83,7 @@ createAppKit({
     email: false,
   },
   chainImages: {
-    [arkivNetwork.id]: `https://arkiv.network/images/arkiv-logo.svg`,
+    [arkivChain.id]: `https://arkiv.network/images/arkiv-logo.svg`,
   },
   themeVariables: {
     "--w3m-accent": "var(--color-primary)",

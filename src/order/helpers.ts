@@ -2,9 +2,9 @@ import {
   createPublicClient,
   createWalletClient,
   http,
-  PublicArkivClient,
+  type PublicArkivClient,
 } from "@arkiv-network/sdk";
-import { rosario } from "@arkiv-network/sdk/chains";
+import { rosario, kaolin, mendoza } from "@arkiv-network/sdk/chains";
 import { custom } from "viem";
 
 export const getEthereumGlobal = () => {
@@ -50,16 +50,31 @@ export const msToShort = (ms: number) => {
   return `${m}m`;
 };
 
+type ArkivNetworkName = "rosario" | "kaolin" | "mendoza";
+
+export const getArkivChainFromEnv = () => {
+  const networkName: ArkivNetworkName =
+    import.meta.env.VITE_ARKIV_NETWORK || "rosario";
+
+  const knownChains = {
+    rosario,
+    kaolin,
+    mendoza,
+  };
+
+  return knownChains[networkName] || rosario;
+};
+
 export const makeMetamaskClient = () => {
   return createWalletClient({
     account: getEthereumGlobal().selectedAddress,
-    chain: rosario,
+    chain: getArkivChainFromEnv(),
     transport: custom(getEthereumGlobal()),
   });
 };
 
 const clientGlobal = createPublicClient({
-  chain: rosario,
+  chain: getArkivChainFromEnv(),
   transport: http(),
 });
 
