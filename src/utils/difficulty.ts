@@ -1,4 +1,4 @@
-import { Problem, ProblemId } from "db-vanity-model/src/order-schema.ts";
+import type { Problem, ProblemId } from "db-vanity-model/src/order-schema.ts";
 
 /**
  * Calculates "n choose k" using BigInt for perfect precision.
@@ -164,7 +164,8 @@ export function matchProblemToAddress(
         if (
           address
             .replace("0x", "")
-            .startsWith(problem.specifier.replace("0x", "").toUpperCase())
+            .toLowerCase()
+            .startsWith(problem.specifier.replace("0x", "").toLowerCase())
         ) {
           return problem;
         }
