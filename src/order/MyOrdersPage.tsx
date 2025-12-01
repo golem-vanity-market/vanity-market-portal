@@ -1,4 +1,3 @@
-import type { Entity } from "@arkiv-network/sdk";
 import { eq } from "@arkiv-network/sdk/query";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { useQuery } from "@tanstack/react-query";
@@ -37,17 +36,18 @@ const fetchMyRequests = async (
   if (!address) {
     throw new Error("Wallet not connected");
   }
-  const arkivClient = publicArkivClient();
-  let rawRes: Entity[];
-  if (showAllOrders) {
-    rawRes = (await arkivClient.query(`vanity_market_request="5"`)).entities;
-  } else {
-    rawRes = (
-      await arkivClient.query(
-        `vanity_market_request="5" && $owner="${address}"`,
-      )
-    ).entities;
+  const whereConditions = [eq("vanity_market_request", "5")];
+  if (!showAllOrders) {
+    whereConditions.push(eq("requestor", address));
   }
+  const arkivClient = publicArkivClient();
+  const query = arkivClient
+    .buildQuery()
+    .where(whereConditions)
+    .ownedBy(import.meta.env.VITE_ARKIV_OWNER_ADDRESS)
+    .withPayload(true)
+    .withMetadata(true);
+  const rawRes = await query.fetch().then((res) => res.entities);
   return rawRes
     .map((entity) => {
       let jsonParsed = null;
@@ -86,10 +86,11 @@ async function fetchOrders(allOrders: boolean, address: string | undefined) {
 
   const whereConditions = [eq("vanity_market_order", "5")];
   if (!allOrders) {
-    whereConditions.push(eq("$owner", address));
+    whereConditions.push(eq("requestor", address));
   }
   const rawRes = await query
     .where(whereConditions)
+    .ownedBy(import.meta.env.VITE_ARKIV_OWNER_ADDRESS)
     .withPayload(true)
     .withMetadata(true)
     .fetch();
