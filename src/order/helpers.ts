@@ -3,10 +3,40 @@ import {
   http,
   type PublicArkivClient,
 } from "@arkiv-network/sdk";
-import { rosario, kaolin, mendoza } from "@arkiv-network/sdk/chains";
+import { kaolin, mendoza, rosario } from "@arkiv-network/sdk/chains";
+import { vanityDurationToSeconds } from "db-vanity-model/src/utils.ts";
 
 // TODO: read from arkiv when it's implemented
 export const REQUEST_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+// Credits calculation: 1 GLM = 1,000,000 credits, 1 credit = 1 minute
+export const CREDITS_PER_MINUTE = 1;
+
+export const formatCreditsFromDuration = (
+  duration: string | number | undefined | null,
+): string => {
+  if (duration === undefined || duration === null) return "—";
+
+  let seconds: number;
+  if (typeof duration === "number") {
+    // Duration is already in seconds
+    seconds = duration;
+  } else if (typeof duration === "string") {
+    seconds = vanityDurationToSeconds(duration);
+  } else {
+    return "—";
+  }
+
+  if (seconds <= 0) return "—";
+  const credits = Math.ceil(seconds / 60) * CREDITS_PER_MINUTE;
+  if (credits >= 1_000_000) {
+    return `${(credits / 1_000_000).toFixed(1)}M`;
+  }
+  if (credits >= 1_000) {
+    return `${(credits / 1_000).toFixed(0)}K`;
+  }
+  return credits.toLocaleString();
+};
 
 export const truncateMiddle = (str: string, start = 6, end = 4) => {
   if (!str) return "";

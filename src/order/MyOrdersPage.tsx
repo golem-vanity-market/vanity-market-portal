@@ -6,7 +6,7 @@ import {
   type VanityRequestWithTimestamp,
   VanityRequestWithTimestampSchema,
 } from "db-vanity-model/src/order-schema.ts";
-import { Loader2, PlusCircle, RefreshCw } from "lucide-react";
+import { Coins, Loader2, PlusCircle, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { z } from "zod";
@@ -24,6 +24,8 @@ import { msToShort, publicArkivClient, REQUEST_TTL_MS } from "./helpers";
 import MyOrdersSection from "./MyOrdersSection";
 import OpenOrdersSection from "./OpenOrdersSection";
 import OrdersExplainer from "./OrdersExplainer";
+import { TopUpCreditsDialog } from "./TopUpCreditsDialog";
+import { useCreditsBalance } from "./useCreditsBalance";
 
 const VALID_TABS = ["awaiting", "queued", "processing", "completed"] as const;
 type TabKey = (typeof VALID_TABS)[number];
@@ -124,6 +126,21 @@ async function fetchOrders(allOrders: boolean, address: string | undefined) {
 
 export const MyOrdersPage = () => {
   const { address } = useAppKitAccount();
+  const { data: creditsBalance, isLoading: isCreditsLoading } =
+    useCreditsBalance();
+
+  // Format credits for display (credits are denominated like ERC20 with 18 decimals)
+  const formatCredits = (credits: bigint): string => {
+    const CREDITS_MULTIPLIER = 10n ** 18n;
+    const whole = credits / CREDITS_MULTIPLIER;
+    const remainder = credits % CREDITS_MULTIPLIER;
+    if (remainder === 0n) {
+      return whole.toString();
+    }
+    // Show up to 2 decimal places
+    const decimals = remainder.toString().padStart(18, "0").slice(0, 2);
+    return `${whole}.${decimals}`.replace(/\\.?0+$/, "");
+  };
 
   const [showAllOrders, setShowAllOrders] = useState(() => {
     return localStorage.getItem("showAllOrders") === "true";
@@ -310,7 +327,26 @@ export const MyOrdersPage = () => {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <Card className="border-none bg-gradient-to-br from-amber-500/10 to-yellow-500/10 shadow-sm shadow-amber-500/20">
+          <CardHeader className="p-5 pb-3">
+            <div className="flex items-center justify-between">
+              <CardDescription className="flex items-center gap-2 text-xs font-semibold text-amber-600 dark:text-amber-400">
+                <Coins className="size-4" />
+                Credits Balance
+              </CardDescription>
+              <TopUpCreditsDialog
+                currentBalance={formatCredits(creditsBalance ?? 0n)}
+              />
+            </div>
+            <CardTitle className="text-3xl font-semibold text-amber-600 dark:text-amber-400">
+              {isCreditsLoading ? "..." : formatCredits(creditsBalance ?? 0n)}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-5 pt-0 text-sm text-muted-foreground">
+            1 credit = 1 minute of compute time
+          </CardContent>
+        </Card>
         <Card className="border-none bg-background/90 shadow-sm shadow-primary/10">
           <CardHeader className="p-5 pb-3">
             <CardDescription className="text-xs font-semibold text-muted-foreground/80">

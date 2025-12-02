@@ -1,13 +1,35 @@
-import { useForm, useWatch } from "react-hook-form";
+import type { WalletArkivClient } from "@arkiv-network/sdk";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { useMutation } from "@tanstack/react-query";
-import { ArrowLeft, CheckSquare2, Square } from "lucide-react";
+import {
+  type Problem,
+  type ProblemId,
+  VanityRequestSchema,
+} from "db-vanity-model/src/order-schema.ts";
+import { vanityDurationToSeconds } from "db-vanity-model/src/utils.ts";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  CheckSquare2,
+  Coins,
+  Square,
+} from "lucide-react";
 import type React from "react";
 import { useState } from "react";
-import { vanityDurationToSeconds } from "db-vanity-model/src/utils.ts";
-
+import { useForm, useWatch } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { z } from "zod";
+import { toast } from "@/components/Toast";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -18,31 +40,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
-import { calculateWorkUnitForProblems } from "@/utils/difficulty";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import { displayDifficulty } from "@/utils";
-import { Alert } from "@/components/ui/alert";
-import { useAppKitAccount } from "@reown/appkit/react";
-import {
-  VanityRequestSchema,
-  type Problem,
-  type ProblemId,
-} from "db-vanity-model/src/order-schema.ts";
-import { problems, problemsById } from "./problem-config";
-import { Link } from "react-router-dom";
-import { toast } from "@/components/Toast";
+import { calculateWorkUnitForProblems } from "@/utils/difficulty";
 import { KeyGuideSheet } from "./KeyGuideSheet";
+import { problems, problemsById } from "./problem-config";
+import { TopUpCreditsDialog } from "./TopUpCreditsDialog";
 import { useArkivWalletClient } from "./useArkivWalletClient";
-import type { WalletArkivClient } from "@arkiv-network/sdk";
+import { useCreditsBalance } from "./useCreditsBalance";
 import { useExplorerUrl } from "./useExplorerUrl";
 
 const FormSchema = z
@@ -263,6 +270,8 @@ export const NewOrderPage = () => {
   const { isConnected } = useAppKitAccount();
   const arkivClient = useArkivWalletClient();
   const explorerUrl = useExplorerUrl();
+  const { data: creditsBalance, isLoading: isCreditsLoading } =
+    useCreditsBalance();
   const LOCAL_STORAGE_KEY = "vanity_last_public_key";
   const [savedPublicKey, setSavedPublicKey] = useState<string | null>(() => {
     try {
@@ -411,14 +420,39 @@ export const NewOrderPage = () => {
   const duration =
     useWatch({ control: form.control, name: "duration" }) || "30m";
 
-  // Convert duration to minutes
+  // Convert duration to minutes - check if valid
   const durationSec = vanityDurationToSeconds(duration);
+  const isDurationValid = durationSec > 0;
+
+  // Credits are denominated like ERC20 tokens (18 decimals)
+  // 1 credit = 10^18, rate: 1 minute = 1 credit
+  const CREDITS_DECIMALS = 18n;
+  const CREDITS_MULTIPLIER = 10n ** CREDITS_DECIMALS;
+  const requiredCredits = isDurationValid
+    ? BigInt(Math.ceil(durationSec / 60)) * CREDITS_MULTIPLIER
+    : 0n;
+  const hasEnoughCredits =
+    isDurationValid && (creditsBalance ?? 0n) >= requiredCredits;
+
+  // Format credits for display (convert from 18 decimals to human readable)
+  const formatCredits = (credits: bigint): string => {
+    const whole = credits / CREDITS_MULTIPLIER;
+    const remainder = credits % CREDITS_MULTIPLIER;
+    if (remainder === 0n) {
+      return whole.toString();
+    }
+    // Show up to 2 decimal places
+    const decimals = remainder.toString().padStart(18, "0").slice(0, 2);
+    return `${whole}.${decimals}`.replace(/\.?0+$/, "");
+  };
 
   // prettier-ignore
-  const hashesPerDuration = 20 // 20 providers
-    * 5 * 1e6 // 5 MH/s
-    * durationSec // duration in seconds
-    * (form.getValues("keyType") === "xpub" ? 0.1 : 1); // xpub is ~10% as effective as a single public key
+  const hashesPerDuration =
+		20 * // 20 providers
+		5 *
+		1e6 * // 5 MH/s
+		durationSec * // duration in seconds
+		(form.getValues("keyType") === "xpub" ? 0.1 : 1); // xpub is ~10% as effective as a single public key
 
   const expectedMatches = Math.round(
     selectedProblems.length > 0 && totalDifficulty > 0
@@ -816,82 +850,249 @@ export const NewOrderPage = () => {
                   </FormItem>
                 )}
               />
-              <div className="mt-4 rounded-md border bg-muted/30 p-4">
-                <h3 className="text-lg font-semibold">Total Difficulty</h3>
-                <p className="text-sm text-foreground/80">
-                  This is an estimate of how many addresses need to be checked
-                  to find at least one that matches any of the selected
-                  problems.
-                </p>
-                <p className="text-sm text-foreground/80">
-                  The more problems you select, the easier it will be to match
-                  any of them.
-                </p>
-                <p className="mt-2 text-2xl font-bold text-primary">
-                  {selectedProblems.length === 0
-                    ? "Select at least 1 problem"
-                    : form.formState.errors.problems
-                      ? "Fix problem configuration errors"
-                      : displayDifficulty(totalDifficulty)}
-                </p>
-                <h3 className="mt-4 text-lg font-semibold">Time Estimation</h3>
-                <p className="text-sm text-foreground/80">
-                  With 20 providers working for {duration}, you can expect to
-                  find approximately:
-                </p>
-                <p className="mt-2 text-2xl font-bold text-primary">
-                  {selectedProblems.length === 0
-                    ? "Select at least 1 problem"
-                    : form.formState.errors.problems
-                      ? "Fix problem configuration errors"
-                      : expectedMatches.toLocaleString() +
-                        " matching addresses"}
-                </p>
-                {expectedMatches < 100 && selectedProblems.length > 0 && (
-                  <p className="mt-2 text-sm text-orange-500">
-                    Warning: The expected number of matches is low. Consider
-                    selecting easier problems for better results.
-                  </p>
-                )}
-              </div>
 
-              <FormField
-                control={form.control}
-                name="duration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Order Duration (human readable)</FormLabel>
-                    <FormControl>
-                      <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
-                        <input
-                          style={{ padding: 10 }}
-                          type={"text"}
-                          value={field.value}
-                          onChange={(e) => field.onChange(e.target.value)}
+              {/* Unified Order Summary Card */}
+              <Card className="overflow-hidden border-2 border-primary/20 bg-gradient-to-br from-card via-card to-primary/5">
+                <CardHeader className="border-b border-border/50 bg-muted/30 pb-4">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    Order Summary
+                  </CardTitle>
+                  <CardDescription>
+                    Review your order details before submitting
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-0">
+                  {/* Invalid Duration Warning */}
+                  {!isDurationValid && (
+                    <div className="flex items-center gap-2 border-b border-orange-500/30 bg-orange-500/10 px-5 py-3 text-sm text-orange-600 dark:text-orange-400">
+                      <AlertTriangle className="size-4" />
+                      <span>
+                        Invalid duration format. Use formats like: 5m, 15m, 1h,
+                        2h30m
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Stats Grid */}
+                  <div className="grid divide-y divide-border/50 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                    {/* Difficulty */}
+                    <div className="p-5">
+                      <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                        Difficulty
+                      </div>
+                      <div
+                        className={cn(
+                          "mt-1 text-2xl font-bold",
+                          !isDurationValid
+                            ? "text-muted-foreground"
+                            : "text-primary",
+                        )}
+                      >
+                        {selectedProblems.length === 0 || !isDurationValid
+                          ? "—"
+                          : form.formState.errors.problems
+                            ? "Error"
+                            : displayDifficulty(totalDifficulty)}
+                      </div>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        {selectedProblems.length === 0
+                          ? "Select a pattern above"
+                          : "How many addresses need to be checked on average to find a match"}
+                      </p>
+                    </div>
+
+                    {/* Expected Matches */}
+                    <div className="p-5">
+                      <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                        Expected Results
+                      </div>
+                      <div
+                        className={cn(
+                          "mt-1 text-2xl font-bold",
+                          !isDurationValid ||
+                            selectedProblems.length === 0 ||
+                            form.formState.errors.problems
+                            ? "text-muted-foreground"
+                            : expectedMatches < 100
+                              ? "text-orange-500"
+                              : "text-green-600 dark:text-green-400",
+                        )}
+                      >
+                        {selectedProblems.length === 0 || !isDurationValid
+                          ? "—"
+                          : form.formState.errors.problems
+                            ? "Error"
+                            : expectedMatches.toLocaleString()}
+                      </div>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        {selectedProblems.length === 0
+                          ? "Select a pattern above"
+                          : "Estimated matching addresses based on 20 providers working for the specified duration"}
+                      </p>
+                    </div>
+
+                    {/* Credits */}
+                    <div
+                      className={cn(
+                        "p-5",
+                        !isDurationValid
+                          ? ""
+                          : !hasEnoughCredits && !isCreditsLoading
+                            ? "bg-destructive/5"
+                            : "",
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                          <Coins className="size-3" />
+                          Credits
+                        </div>
+                        <TopUpCreditsDialog
+                          currentBalance={formatCredits(creditsBalance ?? 0n)}
                         />
                       </div>
-                    </FormControl>
-                    <FormDescription>
-                      How long should providers work on finding matching
-                      addresses for your order.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <div
+                        className={cn(
+                          "mt-1 text-2xl font-bold",
+                          !isDurationValid
+                            ? "text-muted-foreground"
+                            : hasEnoughCredits
+                              ? "text-amber-500"
+                              : "text-destructive",
+                        )}
+                      >
+                        {!isDurationValid
+                          ? "—"
+                          : formatCredits(requiredCredits)}
+                      </div>
+                      <p
+                        className={cn(
+                          "mt-2 text-xs",
+                          !isDurationValid || hasEnoughCredits
+                            ? "text-muted-foreground"
+                            : "text-destructive",
+                        )}
+                      >
+                        {isCreditsLoading
+                          ? "Loading balance..."
+                          : `Your balance: ${formatCredits(creditsBalance ?? 0n)} • Rate: 1 credit per minute`}
+                      </p>
+                    </div>
+                  </div>
 
-              <Button
-                type="submit"
-                disabled={
-                  mutation.isPending || !isConnected || !form.formState.isValid
-                }
-              >
-                {mutation.isPending
-                  ? "Sending Order..."
-                  : !isConnected
-                    ? "Connect wallet to send order"
-                    : "Send Order"}
-              </Button>
+                  {/* Duration & Submit Section */}
+                  <div className="border-t border-border/50 bg-muted/20 p-5">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                      <FormField
+                        control={form.control}
+                        name="duration"
+                        render={({ field }) => (
+                          <FormItem className="flex-1 sm:max-w-md">
+                            <FormLabel className="text-sm font-medium">
+                              Duration
+                            </FormLabel>
+                            <div className="flex flex-col gap-2">
+                              <div className="flex flex-wrap gap-1.5">
+                                {["5m", "15m", "30m", "1h", "4h"].map(
+                                  (preset) => (
+                                    <button
+                                      key={preset}
+                                      type="button"
+                                      onClick={() => field.onChange(preset)}
+                                      className={cn(
+                                        "rounded-full px-3 py-1 text-xs font-medium transition-colors",
+                                        field.value === preset
+                                          ? "bg-primary text-primary-foreground"
+                                          : "bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground",
+                                      )}
+                                    >
+                                      {preset}
+                                    </button>
+                                  ),
+                                )}
+                              </div>
+                              <FormControl>
+                                <Input
+                                  className={cn(
+                                    "h-11 font-mono",
+                                    !isDurationValid &&
+                                      "border-orange-500 focus-visible:ring-orange-500",
+                                  )}
+                                  placeholder="e.g. 5m, 1h, 30m"
+                                  value={field.value}
+                                  onChange={(e) =>
+                                    field.onChange(e.target.value)
+                                  }
+                                />
+                              </FormControl>
+                            </div>
+                            <FormDescription className="text-xs">
+                              How long providers work on your order
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="flex flex-col gap-2 sm:items-end">
+                        {!isDurationValid && (
+                          <div className="flex items-center gap-2 rounded-md bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-600 dark:text-orange-400">
+                            <AlertTriangle className="size-3.5" />
+                            Invalid duration
+                          </div>
+                        )}
+                        {isDurationValid &&
+                          !hasEnoughCredits &&
+                          !isCreditsLoading && (
+                            <div className="flex items-center gap-2 rounded-md bg-destructive/10 px-3 py-1.5 text-xs font-medium text-destructive">
+                              <AlertTriangle className="size-3.5" />
+                              Insufficient credits
+                            </div>
+                          )}
+                        {isDurationValid &&
+                          expectedMatches < 100 &&
+                          selectedProblems.length > 0 &&
+                          !form.formState.errors.problems && (
+                            <div className="flex items-center gap-2 rounded-md bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-600 dark:text-orange-400">
+                              <AlertTriangle className="size-3.5" />
+                              Low expected matches
+                            </div>
+                          )}
+                        <Button
+                          type="submit"
+                          size="lg"
+                          className="h-11 min-w-[200px] gap-2"
+                          disabled={
+                            mutation.isPending ||
+                            !isConnected ||
+                            !form.formState.isValid ||
+                            !hasEnoughCredits ||
+                            isCreditsLoading ||
+                            !isDurationValid
+                          }
+                        >
+                          {mutation.isPending ? (
+                            <>Sending Order...</>
+                          ) : !isConnected ? (
+                            <>Connect wallet</>
+                          ) : !isDurationValid ? (
+                            <>Invalid duration</>
+                          ) : !hasEnoughCredits ? (
+                            <>Insufficient credits</>
+                          ) : (
+                            <>
+                              Send Order
+                              <span className="rounded bg-primary-foreground/20 px-1.5 py-0.5 text-xs">
+                                {formatCredits(requiredCredits)} credits
+                              </span>
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </form>
           </Form>
         </CardContent>

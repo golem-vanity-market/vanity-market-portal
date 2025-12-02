@@ -1,5 +1,21 @@
-import { Badge } from "@/components/ui/badge";
+import type { Problem } from "db-vanity-model/src/order-schema.ts";
+import { Coins, ExternalLink, MoreVertical } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -9,25 +25,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Link } from "react-router-dom";
-import ProblemList from "./ProblemList";
-import type { Problem } from "db-vanity-model/src/order-schema.ts";
-import { formatDateTime, formatRelative, truncateMiddle } from "./helpers";
 import { CancelRequestMenuItem } from "./CancelRequestButton";
-import { ExternalLink, MoreVertical } from "lucide-react";
+import {
+  formatCreditsFromDuration,
+  formatDateTime,
+  formatRelative,
+  truncateMiddle,
+} from "./helpers";
+import ProblemList from "./ProblemList";
 import { useExplorerUrl } from "./useExplorerUrl";
 
 type Order = {
@@ -39,6 +44,7 @@ type Order = {
   completed: string | null;
   pubKey: string;
   problems: Problem[];
+  duration?: string | number;
 };
 
 export function MyOrdersSection({
@@ -107,6 +113,7 @@ export function MyOrdersSection({
               <TableHead className="">Created</TableHead>
               <TableHead className="">Started</TableHead>
               <TableHead className="">Completed</TableHead>
+              <TableHead className="">Cost</TableHead>
               <TableHead className="">Status</TableHead>
               <TableHead className="">Results</TableHead>
               <TableHead className="">Patterns</TableHead>
@@ -219,6 +226,12 @@ export function MyOrdersSection({
                     ) : (
                       <span className="text-muted-foreground">—</span>
                     )}
+                  </TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center gap-1 text-sm font-medium text-amber-600 dark:text-amber-400">
+                      <Coins className="size-3" />
+                      {formatCreditsFromDuration(o.duration)}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <Badge
